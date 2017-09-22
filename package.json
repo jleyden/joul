@@ -1,0 +1,8 @@
+{
+  "name": "project194",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/jleyden/project194.git",
+  "author": "John Leyden <johnjl712@gmail.com>",
+  "license": "MIT"
+}
