@@ -1,13 +1,38 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native'; 
+import { TabNavigator } from 'react-navigation'
 
-export default class App extends React.Component {
+import Actions from './screens/actions'
+import Community from './screens/community'
+import Market from './screens/market'
+import Profile from './screens/profile'
+
+const App = TabNavigator({
+  Community: {
+    screen: Community,
+  },
+  Actions: {
+    screen: Actions,
+  },
+  Market: {
+    screen: Market
+  },
+  Profile: {
+    screen: Profile
+  }
+}, {
+  tabBarPosition: 'bottom',
+  animationEnabled: true,
+  tabBarOptions: {
+    activeTintColor: '#e91e63',
+  },
+})
+
+export default class project194 extends React.Component {
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.bigText}>Hello World!</Text>
-        <Text>Welcome to Project194</Text>
-      </View>
+      <App/>
     );
   }
 }
