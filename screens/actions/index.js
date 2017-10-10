@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 
 const statusConfigs = {
   before: {
-    topText: <Text style={styles.bigText}>Press start after entering the bus</Text>,
+    topText: <Text style={styles.bigText}>Press start after entering bus</Text>,
 	  buttonStyle: styles.start,
 	  buttonText: <Text>Start Trip</Text>
   },
