@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Container, Header, Content,
   Button, Text, Title,
   Body, Grid, Row, Col } from 'native-base';
+import MapView from 'react-native-maps';
 
 
 const styles = StyleSheet.create({
@@ -58,14 +59,38 @@ export default class Actions extends React.Component {
     super()
     // states are before, during, and after
     this.state = {
-      status: 'before'
+      status: 'before',
+	    latitude: null,
+	    longitude: null,
+	    error: null,
+	    recording: false
     }
+  }
+
+  componentWillMount() {
+
+  }
+
+  recordLocation() {
+  	this.setState({recording: true})
+	  navigator.geolocation.getCurrentPosition(
+		  (position) => {
+			  this.setState({
+				  latitude: position.coords.latitude,
+				  longitude: position.coords.longitude,
+				  error: null,
+			  });
+		  },
+		  (error) => this.setState({ error: error.message }),
+		  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 1 },
+	  );
   }
 
   buttonHandler () {
     switch (this.state.status) {
       case 'before':
         this.setState({status: 'during'})
+	      this.recordLocation()
         break
       case 'during':
         this.setState({status: 'after'})
@@ -103,6 +128,19 @@ export default class Actions extends React.Component {
             </Col>
               <Col/>
             </Row>
+	          <Row>
+		          {this.state.status === 'during' ?
+			          <Row>
+				          <MapView
+					          initialRegion={{
+						          latitude: this.state.latitude,
+						          longitude: this.state.longitude,
+						          latitudeDelta: 0.0922,
+						          longitudeDelta: 0.0421,
+					          }}
+				          />
+			          </Row>: null }
+	          </Row>
           </Grid>
         </Content>
       </Container>
