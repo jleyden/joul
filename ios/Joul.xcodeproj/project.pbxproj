@@ -543,11 +543,7 @@
 			isa = PBXGroup;
 			children = (
 				ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */,
-<<<<<<< HEAD
-				0FD4CAB21F9EAE6400DE4C47 /* libRCTBlob-tvOS.a */,
-=======
 				685CAA7C1F9E9D8700F17896 /* libRCTBlob-tvOS.a */,
->>>>>>> 8306ad5c0b22b29f02a26fddc6efab072df6f50b
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1122,14 +1118,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-<<<<<<< HEAD
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 				);
-=======
 				DEVELOPMENT_TEAM = XV29Q4KBL3;
->>>>>>> 8306ad5c0b22b29f02a26fddc6efab072df6f50b
 				INFOPLIST_FILE = Joul/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1147,14 +1140,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
-<<<<<<< HEAD
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 				);
-=======
 				DEVELOPMENT_TEAM = XV29Q4KBL3;
->>>>>>> 8306ad5c0b22b29f02a26fddc6efab072df6f50b
 				INFOPLIST_FILE = Joul/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
