@@ -3,13 +3,13 @@ import { StyleSheet } from 'react-native';
 import { Container, Header, Content,
   Button, Text, Title,
   Body, Grid, Row, Col } from 'native-base';
+import MapView from 'react-native-maps';
 
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: '#fff',
-		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	bigText: {
@@ -110,11 +110,8 @@ export default class Actions extends React.Component {
             <Title>Ride a bus</Title>
           </Body>
         </Header>
-        <Content>
+        <Content contentContainerStyle = {styles.container}>
           <Grid>
-            <Row style={{height: '100%', padding: 10}}>
-		          {currProps.topText}
-            </Row>
             <Row>
             <Col/>
             <Col>
@@ -127,13 +124,19 @@ export default class Actions extends React.Component {
             </Row>
 	          <Row>
 		          {this.state.status === 'during' ?
-		          <Title>Latitude: {this.state.latitude}</Title> : null}
-	          </Row>
-	          <Row>
+			          <Text>Latitude: {this.state.latitude}</Text> : null}
 		          {this.state.status === 'during' ?
-			          <Title>Longitude: {this.state.longitude}</Title> : null}
+			          <Text>Longitude: {this.state.longitude}</Text> : null}
 	          </Row>
           </Grid>
+	        <MapView
+		        initialRegion={{
+			        latitude: 37.78825,
+			        longitude: -122.4324,
+			        latitudeDelta: 0.0922,
+			        longitudeDelta: 0.0421,
+		        }}
+	        />
         </Content>
       </Container>
     );
