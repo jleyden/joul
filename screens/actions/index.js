@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Alert } from 'react-native';
 import { Container, Header, Content,
   Button, Text, Title,
-  Body, Grid, Row, Col } from 'native-base';
+  Body, Grid, Row, Col} from 'native-base';
 import MapView from 'react-native-maps';
 import locationIcon from './smile.png';
 
@@ -19,16 +19,22 @@ const styles = StyleSheet.create({
 		fontSize: 25
 	},
 	start: {
-	  margin: 'auto',
-		backgroundColor: '#009688'
+		backgroundColor: '#009688',
+		position: 'absolute',
+		top: 25,
+		left: 25
 	},
 	during: {
-		margin: 'auto',
-		backgroundColor: '#f44336'
+		backgroundColor: '#f44336',
+		position: 'absolute',
+		top: 25,
+		left: 25
 	},
-	stop: {
-		margin: 'auto',
-		backgroundColor: '#3F51B5'
+	after: {
+		backgroundColor: '#3F51B5',
+		position: 'absolute',
+		top: 25,
+		left: 25
 	},
 	map: {
 		left: 0,
@@ -93,7 +99,6 @@ export default class Actions extends React.Component {
 		  (error) => this.setState({ error: error.message }),
 		  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
 	  );
-
   }
 
 	componentWillUnmount() {
@@ -134,10 +139,14 @@ export default class Actions extends React.Component {
 				        initialRegion={{
 					        latitude: this.state.position.latitude,
 					        longitude: this.state.position.longitude,
-					        latitudeDelta: 0.0922,
-					        longitudeDelta: 0.0421,
+					        latitudeDelta: 0.00922,
+					        longitudeDelta: 0.00421,
 				        }}
 			        >
+				        <Button onPress={() => this.buttonHandler()}
+				                style={currProps.buttonStyle}>
+					        {currProps.buttonText}
+				        </Button>
 				        <MapView.Marker
 					        coordinate={this.state.position}
 				          image={locationIcon}
