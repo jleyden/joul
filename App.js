@@ -31,8 +31,9 @@ const App = TabNavigator({
 export default class project194 extends React.Component {
 
   render() {
+    // hihji
     return (
-      <App/>
+        <App/>
     );
   }
 }
