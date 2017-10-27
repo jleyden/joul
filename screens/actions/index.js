@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Container, Header, Content,
   Button, Text, Title,
   Body, Grid, Row, Col } from 'native-base';
@@ -10,7 +10,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: '#fff',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		alignItems: 'center'
 	},
 	bigText: {
 		color: '#000000',
@@ -27,6 +28,13 @@ const styles = StyleSheet.create({
 	stop: {
 		margin: 'auto',
 		backgroundColor: '#3F51B5'
+	},
+	map: {
+		left: 0,
+		right: 0,
+		top: 0,
+		bottom: 0,
+		position: 'absolute'
 	}
 });
 
@@ -110,33 +118,18 @@ export default class Actions extends React.Component {
             <Title>Ride a bus</Title>
           </Body>
         </Header>
-        <Content contentContainerStyle = {styles.container}>
-          <Grid>
-            <Row>
-            <Col/>
-            <Col>
-                <Button onPress={() => this.buttonHandler()}
-                        style={currProps.buttonStyle}>
-                  {currProps.buttonText}
-                </Button>
-            </Col>
-              <Col/>
-            </Row>
-	          <Row>
-		          {this.state.status === 'during' ?
-			          <Text>Latitude: {this.state.latitude}</Text> : null}
-		          {this.state.status === 'during' ?
-			          <Text>Longitude: {this.state.longitude}</Text> : null}
-	          </Row>
-          </Grid>
-	        <MapView
-		        initialRegion={{
-			        latitude: 37.78825,
-			        longitude: -122.4324,
-			        latitudeDelta: 0.0922,
-			        longitudeDelta: 0.0421,
-		        }}
-	        />
+        <Content>
+	        <View style={styles.container}>
+		        <MapView
+			        style={styles.map}
+			        initialRegion={{
+				        latitude: 37.78825,
+				        longitude: -122.4324,
+				        latitudeDelta: 0.0922,
+				        longitudeDelta: 0.0421,
+			        }}
+		        />
+	        </View>
         </Content>
       </Container>
     );
