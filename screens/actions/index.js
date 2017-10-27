@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Container, Header, Content,
-  Button, Text, Title,
+	Text, Title, Button,
   Body, Grid, Row, Col} from 'native-base';
 import MapView from 'react-native-maps';
 import locationIcon from './smile.png';
@@ -84,9 +84,10 @@ export default class Actions extends React.Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
 	  this.watchId = navigator.geolocation.watchPosition(
 		  (position) => {
+		  	console.log('position updating...')
 			  this.setState({
 				  position: {
 					  latitude: position.coords.latitude,
@@ -97,7 +98,7 @@ export default class Actions extends React.Component {
 			  });
 		  },
 		  (error) => this.setState({ error: error.message }),
-		  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
+		  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 1 },
 	  );
   }
 
