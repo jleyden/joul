@@ -42,33 +42,14 @@ const styles = StyleSheet.create({
 		top: 0,
 		bottom: 0,
 		position: 'absolute'
+	},
+	buttonText: {
+		position: 'absolute',
+		margin: 'auto'
 	}
 });
 
-const statusConfigs = {
-  before: {
-    topText: <Text style={styles.bigText}>Press start after entering the bus</Text>,
-	  buttonStyle: styles.start,
-	  buttonText: <Text>Start Trip</Text>
-  },
-  during: {
-    topText: <Text style={styles.bigText}>Recording Trip...</Text>,
-	  buttonStyle: styles.during,
-	  buttonText: <Text>End Trip</Text>
-  },
-  after: {
-	  topText: <Text style={styles.bigText}>Submit your trip for verification</Text>,
-    buttonStyle: styles.after,
-    buttonText: <Text>Submit trip</Text>
-  }
-}
-
-
 export default class Actions extends React.Component {
-
-  static navigationOptions = {
-    tabBarLabel: 'Actions',
-  }
 
   constructor() {
     super()
@@ -80,12 +61,20 @@ export default class Actions extends React.Component {
 		    longitude: -122.4324
 	    },
 	    geoLoaded: false,
-	    error: null
+	    error: null,
     }
+    this.recording = false
+	  this.geoPath = []
+	  this.geoBox = {
+    	north: null,
+		  south: null,
+		  east: null,
+		  west: null,
+	  }
   }
 
   componentDidMount() {
-	  this.watchId = navigator.geolocation.watchPosition(
+	  this.watchId = navigator.geolocation.getCurrentPosition(
 		  (position) => {
 		  	console.log('position updating...')
 			  this.setState({
@@ -98,7 +87,7 @@ export default class Actions extends React.Component {
 			  });
 		  },
 		  (error) => this.setState({ error: error.message }),
-		  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 1 },
+		  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
 	  );
   }
 
@@ -122,10 +111,80 @@ export default class Actions extends React.Component {
     }
   }
 
-  // hi
+  // This should change to watchPosition() if we find that it actually works
+  startRecording() {
+  	this.recording = true
+	  this.recordID = setInterval( () =>
+		  navigator.geolocation.getCurrentPosition(
+			  (position) => {
+				  console.log('position updating...')
+				  this.setState({
+					  position: {
+						  latitude: position.coords.latitude,
+						  longitude: position.coords.longitude
+					  },
+					  geoLoaded: true,
+					  error: null,
+				  })
+				  this.updatePath(position.coords.latitude, position.coords.longitude)
+			  },
+			  (error) => this.setState({ error: error.message }),
+			  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
+		  )
+	  , 5000);
+  }
+
+  // updates the geoPath and the geoBox
+  updatePath(latitude, longitude) {
+	  this.geoPath.push({
+		  time: Date.now(),
+		  latitude: latitude,
+		  longitude: longitude
+	  })
+	  // expand the geoBox if needed
+	  if (this.geoBox.east === null || longitude < this.geoBox.east ) {
+	  	this.geoBox.east = longitude}
+	  if (this.geoBox.west === null || longitude > this.geoBox.west ) {
+		  this.geoBox.west = longitude}
+	  if (this.geoBox.north === null || latitude > this.geoBox.north ) {
+		  this.geoBox.north = longitude}
+	  if (this.geoBox.south === null || longitude < this.geoBox.south ) {
+		  this.geoBox.south = longitude
+	  }
+  }
+
   render() {
     const currStatus = this.state.status
-    const currProps = statusConfigs[currStatus]
+    let buttonStyle, buttonText, pathBox
+
+	  // If we're in the 'during' status, we want to start recording the path
+	  switch (currStatus) {
+		  case 'before':
+		  	this.geoPath = []
+			  buttonStyle = styles.start
+			  buttonText = <Text>Start Trip</Text>
+			  break
+		  case 'during':
+		  	if (!this.recording) {
+				  this.updatePath(this.state.position.latitude, this.state.position.longitude)
+				  this.startRecording()
+			  }
+			  buttonStyle = styles.during
+			  buttonText = <Text>End Trip</Text>
+			  break
+		  case 'after':
+			  clearInterval(this.recordID)
+			  this.recording = false
+			  buttonStyle = styles.after
+			  buttonText = <Text>Submit Trip</Text>
+			  pathBox = {
+			  	latitude: (this.geoBox.north + this.geoBox.south) / 2,
+				  longitude: (this.geoBox.east + this.geoBox.west) / 2,
+				  longitudeDelta: Math.abs(this.geoBox.north - this.geoBox.south) + 0.0008,
+				  latitudeDelta: Math.abs(this.geoBox.east - this.geoBox.west) + 0.0008
+			  }
+	  }
+
     return (
       <Container>
         <Header>
@@ -136,8 +195,10 @@ export default class Actions extends React.Component {
 	        <View style ={styles.container}>
 		        {this.state.geoLoaded ?
 			        <MapView
-				        style = {styles.map}
-				        initialRegion={{
+				        style={styles.map}
+				        provider='google'
+				        scrollEnabled={false}
+				        region={currStatus === 'after' ? pathBox : {
 					        latitude: this.state.position.latitude,
 					        longitude: this.state.position.longitude,
 					        latitudeDelta: 0.00922,
@@ -145,13 +206,25 @@ export default class Actions extends React.Component {
 				        }}
 			        >
 				        <Button onPress={() => this.buttonHandler()}
-				                style={currProps.buttonStyle}>
-					        {currProps.buttonText}
+				                style={buttonStyle}>
+					        {buttonText}
 				        </Button>
 				        <MapView.Marker
 					        coordinate={this.state.position}
 				          image={locationIcon}
 				        />
+				        {this.state.status !== 'before' && this.geoPath.length >= 2 ?
+					        // The line of the path the user is taking
+				          <MapView.Polyline
+					          strokeColor="#009688"
+					          strokeWidth={5}
+					          coordinates={
+				          	this.geoPath.map((point) => {
+				          return {
+				          	latitude: point.latitude,
+					          longitude: point.longitude }}
+				          )}/>
+					        : null}
 			        </MapView>
 				        : null }
 	        </View>
