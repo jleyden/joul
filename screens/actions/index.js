@@ -58,9 +58,31 @@ export default class Actions extends React.Component {
     super()
     // states are before, during, and after
     this.state = {
-      status: 'before'
+      status: 'before', // enum to represent the current status of the action screen
+	    latitude: null,
+	    longitude: null,
+	    error: null
     }
   }
+
+  componentWillMount() {
+	  this.watchId = navigator.geolocation.watchPosition(
+		  (position) => {
+			  this.setState({
+				  latitude: position.coords.latitude,
+				  longitude: position.coords.longitude,
+				  error: null,
+			  });
+		  },
+		  (error) => this.setState({ error: error.message }),
+		  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
+	  );
+
+  }
+
+	componentWillUnmount() {
+		navigator.geolocation.clearWatch(this.watchId);
+	}
 
   buttonHandler () {
     switch (this.state.status) {
@@ -90,7 +112,7 @@ export default class Actions extends React.Component {
         </Header>
         <Content>
           <Grid>
-            <Row style={{height: '100%', padding: 10, textAlign: 'center'}}>
+            <Row style={{height: '100%', padding: 10}}>
 		          {currProps.topText}
             </Row>
             <Row>
@@ -103,6 +125,14 @@ export default class Actions extends React.Component {
             </Col>
               <Col/>
             </Row>
+	          <Row>
+		          {this.state.status === 'during' ?
+		          <Title>Latitude: {this.state.latitude}</Title> : null}
+	          </Row>
+	          <Row>
+		          {this.state.status === 'during' ?
+			          <Title>Longitude: {this.state.longitude}</Title> : null}
+	          </Row>
           </Grid>
         </Content>
       </Container>
