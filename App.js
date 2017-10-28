@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native'; 
 import { TabNavigator } from 'react-navigation'
 
+import Login from './src/components/Login/Login';
+import Register from './src/components/Register/Register';
 import Actions from './screens/actions'
 import Community from './screens/community'
 import Market from './screens/market'
@@ -28,11 +30,21 @@ const App = TabNavigator({
   },
 })
 
+
 export default class project194 extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {
+      loggedIn: false
+    }
+  }
 
   render() {
     return (
-      <App/>
+        //<Register/>
+        <Login/>
+     // <App/>
     );
   }
 }
