@@ -1,10 +1,11 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
 import { Container, Header, Content,
-	Text, Title, Button,
-  Body, Grid, Row, Col} from 'native-base';
-import MapView from 'react-native-maps';
-import locationIcon from './smile.png';
+	Text, Title,
+  Body, Grid, Row, Col} from 'native-base'
+import { Button } from 'react-native-elements'
+import MapView from 'react-native-maps'
+import locationIcon from './smile.png'
 
 
 const styles = StyleSheet.create({
@@ -21,20 +22,20 @@ const styles = StyleSheet.create({
 	start: {
 		backgroundColor: '#009688',
 		position: 'absolute',
-		top: 25,
-		left: 25
+		width: '100%',
+		margin: 'auto'
 	},
 	during: {
 		backgroundColor: '#f44336',
 		position: 'absolute',
-		top: 25,
-		left: 25
+		width: '100%',
+		margin: 'auto'
 	},
 	after: {
 		backgroundColor: '#3F51B5',
 		position: 'absolute',
-		top: 25,
-		left: 25
+		width: '100%',
+		margin: 'auto'
 	},
 	map: {
 		left: 0,
@@ -48,6 +49,7 @@ const styles = StyleSheet.create({
 		margin: 'auto'
 	}
 });
+
 
 export default class Actions extends React.Component {
 
@@ -147,10 +149,9 @@ export default class Actions extends React.Component {
 	  if (this.geoBox.west === null || longitude > this.geoBox.west ) {
 		  this.geoBox.west = longitude}
 	  if (this.geoBox.north === null || latitude > this.geoBox.north ) {
-		  this.geoBox.north = longitude}
-	  if (this.geoBox.south === null || longitude < this.geoBox.south ) {
-		  this.geoBox.south = longitude
-	  }
+		  this.geoBox.north = latitude}
+	  if (this.geoBox.south === null || latitude < this.geoBox.south ) {
+		  this.geoBox.south = latitude}
   }
 
   render() {
@@ -162,7 +163,7 @@ export default class Actions extends React.Component {
 		  case 'before':
 		  	this.geoPath = []
 			  buttonStyle = styles.start
-			  buttonText = <Text>Start Trip</Text>
+			  buttonText = 'Start Trip'
 			  break
 		  case 'during':
 		  	if (!this.recording) {
@@ -170,13 +171,13 @@ export default class Actions extends React.Component {
 				  this.startRecording()
 			  }
 			  buttonStyle = styles.during
-			  buttonText = <Text>End Trip</Text>
+			  buttonText = 'End Trip'
 			  break
 		  case 'after':
 			  clearInterval(this.recordID)
 			  this.recording = false
 			  buttonStyle = styles.after
-			  buttonText = <Text>Submit Trip</Text>
+			  buttonText = 'Submit Trip'
 			  pathBox = {
 			  	latitude: (this.geoBox.north + this.geoBox.south) / 2,
 				  longitude: (this.geoBox.east + this.geoBox.west) / 2,
@@ -198,6 +199,8 @@ export default class Actions extends React.Component {
 				        style={styles.map}
 				        provider='google'
 				        scrollEnabled={false}
+				        zoomEnabled={false}
+				        pitchEnabled={false}
 				        region={currStatus === 'after' ? pathBox : {
 					        latitude: this.state.position.latitude,
 					        longitude: this.state.position.longitude,
@@ -206,8 +209,8 @@ export default class Actions extends React.Component {
 				        }}
 			        >
 				        <Button onPress={() => this.buttonHandler()}
-				                style={buttonStyle}>
-					        {buttonText}
+				                title={buttonText}
+				                buttonStyle={buttonStyle}>
 				        </Button>
 				        <MapView.Marker
 					        coordinate={this.state.position}
