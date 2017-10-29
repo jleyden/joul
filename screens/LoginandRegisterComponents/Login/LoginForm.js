@@ -3,23 +3,57 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, StatusBar } from '
 import { connect } from 'react-redux';
 import { login } from '../../../redux/actions/auth';
 import { register } from '../../../redux/actions/auth';
+import Config from 'react-native-config';
+import firebase from 'firebase';
+
+var fireBaseconfig = {
+    apiKey: "AIzaSyCyMpjgbuOf2tVH6aOKYxg3jMOG7nQPlSA",
+    authDomain: "joul-3afc1.firebaseapp.com",
+    databaseURL: "https://joul-3afc1.firebaseio.com",
+    projectId: "joul-3afc1",
+    storageBucket: "joul-3afc1.appspot.com",
+    messagingSenderId: "870174821785"
+}
 
 class Login extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
+            loading: false,
             route: 'Login',
-            username: '',
+            email: '',
             password: ''
         };
     }
+    componentWillMount() {
+        firebase.initializeApp({
+            apiKey: "AIzaSyCyMpjgbuOf2tVH6aOKYxg3jMOG7nQPlSA",
+            authDomain: "joul-3afc1.firebaseapp.com",
+            databaseURL: "https://joul-3afc1.firebaseio.com",
+            projectId: "joul-3afc1",
+            storageBucket: "joul-3afc1.appspot.com",
+            messagingSenderId: "870174821785"
+        })
+    }
     userLogin (e) {
-        this.props.onLogin(this.state.username, this.state.password);
+        this.signin()
+        this.props.onLogin(this.state.email, this.state.password);
         e.preventDefault();
     }
     newUser (e) {
         this.props.onRegister();
         e.preventDefault();
+    }
+    signin(){
+        this.setState({
+            loading: true
+        });
+        const { email, password } = this.state;
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(() => { this.setState({ error: '', loading: false }); })
+            .catch(() => {
+                alert("login failed");
+            });
     }
     render() {
         return (
@@ -28,7 +62,7 @@ class Login extends React.Component {
                     barStyle="light-content"
                     />
                 <TextInput
-                    placeholder="username or email address"
+                    placeholder="email address"
                     placeholderTextColor="rgba(255,255,255,0.8)"
                     returnKeyType="next"
                     style={ styles.input }
@@ -36,8 +70,8 @@ class Login extends React.Component {
                     autoCapitalize="none"
                     autoCorrect={ false }
                     onSubmitEditing={() => this.passwordInput.focus()}
-                    value={this.state.username}
-                    onChangeText={(text) => this.setState({ username: text })}
+                    value={this.state.email}
+                    onChangeText={(text) => this.setState({ email: text })}
                     />
                 <TextInput
                     placeholder="password"
@@ -51,7 +85,6 @@ class Login extends React.Component {
                     onChangeText={(text) => this.setState({ password: text })}
                     ref={(input) => this.passwordInput = input}
                     />
-
 
                 <TouchableOpacity onPress={(e) => this.userLogin(e)} title={this.state.route} style={styles.buttonContainer}>
                     <Text style={styles.buttonText}>LOGIN</Text>
@@ -72,9 +105,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLogin: (username, password) => { dispatch(login(username, password)); },
+        onLogin: (email, password) => { dispatch(login(email, password)); },
         onRegister: () => { dispatch(register()); },
-        onSignUp: (username, email, password) => { dispatch(signup(username, email, password)); }
+        onSignUp: (email, password) => { dispatch(signup(email, password)); }
     }
 }
 

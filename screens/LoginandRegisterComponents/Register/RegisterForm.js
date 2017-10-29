@@ -3,43 +3,60 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, StatusBar } from '
 import { connect } from 'react-redux';
 import { login } from '../../../redux/actions/auth';
 import { register } from '../../../redux/actions/auth';
+import Config from 'react-native-config';
+import firebase from 'firebase';
+
+
+
+
 
 class Login extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
             route: 'Register',
+            loaded: true,
             username: '',
             email: '',
             password: '',
             confirmPassword: '',
-            emailValid: true,
-            usernameValid: true,
-            passwordValid: true,
-            confirmPasswordValid: true
         };
+    }
+    componentWillMount() {
+        firebase.initializeApp({
+            apiKey: "AIzaSyCyMpjgbuOf2tVH6aOKYxg3jMOG7nQPlSA",
+            authDomain: "joul-3afc1.firebaseapp.com",
+            databaseURL: "https://joul-3afc1.firebaseio.com",
+            projectId: "joul-3afc1",
+            storageBucket: "joul-3afc1.appspot.com",
+            messagingSenderId: "870174821785"
+        })
     }
     checkFormsAndRegister (e) {
         var errorMessage = "";
+        var emailValid = false;
+        var usernameValid = false;
+        var passwordValid = false;
+        var confirmPasswordValid = false;
         //Check that email field is complete and valid
         if (!this.state.email) {
             errorMessage = errorMessage.concat("Email field is empty. ");
         } else if (this.state.email.indexOf('@') < 1) {
             errorMessage = errorMessage.concat("This email is invalid. ");
         } else {
-            this.setState({ emailValid: true });
+            emailValid = true;
         }
         //Check that username field is complete
         if (!this.state.username) {
             errorMessage = errorMessage.concat("Username field is empty. ");
         } else {
-            this.setState({ usernameValid: true });
+            usernameValid = true;
         }
         //Check that password field is complete
         if (!this.state.password) {
             errorMessage = errorMessage.concat("Password field is empty. ");
         } else {
-            this.setState({ passwordValid: true });
+            passwordValid = true;
         }
         //Check that confirm password field is complete and confirm password matches password
         if (!this.state.confirmPassword) {
@@ -48,18 +65,43 @@ class Login extends React.Component {
         if (this.state.password != this.state.confirmPassword) {
             errorMessage = errorMessage.concat(" The passwords do not match.")
         } else {
-            this.setState({ confirmPasswordValid: true });
+            confirmPasswordValid = true;
         }
         if (errorMessage) {
             alert(errorMessage);
         }
-        if (!this.state.emailValid || !this.state.usernameValid &&
-            !this.state.passwordValid || !this.state.confirmPasswordValid) {
-            this.props.onLogin(this.state.username, this.state.password);
+        if (emailValid && usernameValid && passwordValid && confirmPasswordValid) {
+            this.setState({
+                loaded: false
+            })
+            this.signup();
+            var email = this.state.email;
+            var pass = this.state.password;
+            this.setState({
+                username: '',
+                email: '',
+                password: '',
+                confirmPassword: '',
+                loaded: true,
+            });
+            this.props.onLogin(email, pass);
         }
-
         e.preventDefault();
     }
+
+    // A method to passs the username and password to firebase and make a new user account
+    signup() {
+        this.setState({
+            // When waiting for the firebase server show the loading indicator.
+            loaded: false
+        });
+        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+            .then(() => { this.setState({ error: '', loaded: true }); })
+            .catch(() => {
+                this.setState({ error: 'Authentication failed.', loaded: true });
+            });
+    }
+
 
     render() {
         return (
@@ -137,9 +179,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLogin: (username, password) => { dispatch(login(username, password)); },
+        onLogin: (email, password) => { dispatch(login(email, password)); },
         onRegister: () => { dispatch(register()); },
-        onSignUp: (username, email, password) => { dispatch(signup(username, email, password)); }
+        onSignUp: (email, password) => { dispatch(signup(email, password)); }
     }
 }
 
