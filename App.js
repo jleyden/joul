@@ -1,52 +1,27 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native'; 
-import { TabNavigator } from 'react-navigation'
+import { Provider } from 'react-redux';
+import Application from './screens/Application';
 
-import Actions from './screens/actions'
-import Community from './screens/community'
-import Market from './screens/market'
-import Profile from './screens/profile'
+import store from './redux';
 
-const App = TabNavigator({
-  Community: {
-    screen: Community,
-  },
-  Actions: {
-    screen: Actions,
-  },
-  Market: {
-    screen: Market
-  },
-  Profile: {
-    screen: Profile
-  }
-}, {
-  tabBarPosition: 'bottom',
-  animationEnabled: true,
-  tabBarOptions: {
-    activeTintColor: '#e91e63',
-  },
-})
 
 export default class project194 extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {
+      loggedIn: false
+    }
+  }
 
   render() {
     // hihji
     return (
-        <App/>
+        <Provider store={store}>
+          <Application/>
+        </Provider>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  bigText: {
-    color: '#009688',
-    fontSize: 30
-  }
-});
+;
