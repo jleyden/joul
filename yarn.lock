@@ -426,7 +426,7 @@ auth0@^2.7.0:
     request "^2.81.0"
     rest-facade "^1.5.0"
 
-aws-sdk@*, aws-sdk@^2.6.0:
+aws-sdk@^2.6.0:
   version "2.141.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.141.0.tgz#3d96a5970fd9f540ceabcc1d4baeb33b71583aa7"
   dependencies:
@@ -5238,12 +5238,6 @@ react-devtools-core@^2.5.0:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
-react-native-aws-cognito-js@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/react-native-aws-cognito-js/-/react-native-aws-cognito-js-0.0.7.tgz#e844a8aa7fa34334e202746993316372b1139427"
-  dependencies:
-    aws-sdk "*"
-
 react-native-branch@2.0.0-beta.3:
   version "2.0.0-beta.3"
   resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-2.0.0-beta.3.tgz#2167af86bbc9f964bd45bd5f37684e5b54965e32"
@@ -5377,8 +5371,7 @@ react-native-vector-icons@4.1.1:
     prop-types "^15.5.8"
     yargs "^6.3.0"
 
-
-react-native-vector-icons@~4.4.2:
+react-native-vector-icons@^4.4.2, react-native-vector-icons@~4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.4.2.tgz#090f42ee0396c4cc4eae0ddaa518028ba8df40c7"
   dependencies:
