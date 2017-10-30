@@ -21,7 +21,7 @@ A news feed of all the latest events from the Joul Community (in development)
 
 ![Commute](https://i.imgur.com/78HuOZpl.jpg)
 
-Do an eco-friendly action to score jouls! We are starting off with utilizing clean commutes, such as taking the bus or train to work!
+Do an eco-friendly action to score jouls! We are starting off with utilizing clean commutes, such as taking the bus or train to work.
 
 #### Market
 Use your jouls in the marketplace to buy something you want! Also, you can sell your goods for more jouls! (in development)
@@ -29,8 +29,6 @@ Use your jouls in the marketplace to buy something you want! Also, you can sell 
 #### Profile
 Look at all your recent actions!
 
-
-### Run JOUL Locally
 
 ### Run JOUL Locally
 
