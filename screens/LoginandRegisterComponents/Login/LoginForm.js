@@ -6,15 +6,6 @@ import { register } from '../../../redux/actions/auth';
 import Config from 'react-native-config';
 import firebase from 'firebase';
 
-var fireBaseconfig = {
-    apiKey: "AIzaSyCyMpjgbuOf2tVH6aOKYxg3jMOG7nQPlSA",
-    authDomain: "joul-3afc1.firebaseapp.com",
-    databaseURL: "https://joul-3afc1.firebaseio.com",
-    projectId: "joul-3afc1",
-    storageBucket: "joul-3afc1.appspot.com",
-    messagingSenderId: "870174821785"
-}
-
 class Login extends React.Component {
     constructor (props) {
         super(props);
@@ -25,16 +16,8 @@ class Login extends React.Component {
             password: ''
         };
     }
-    componentWillMount() {
-        firebase.initializeApp({
-            apiKey: "AIzaSyCyMpjgbuOf2tVH6aOKYxg3jMOG7nQPlSA",
-            authDomain: "joul-3afc1.firebaseapp.com",
-            databaseURL: "https://joul-3afc1.firebaseio.com",
-            projectId: "joul-3afc1",
-            storageBucket: "joul-3afc1.appspot.com",
-            messagingSenderId: "870174821785"
-        })
-    }
+
+    
     userLogin (e) {
         this.signin()
         this.props.onLogin(this.state.email, this.state.password);
