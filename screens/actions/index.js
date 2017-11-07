@@ -6,6 +6,8 @@ import { Container, Header, Content,
 import { Button } from 'react-native-elements'
 import MapView from 'react-native-maps'
 import locationIcon from './smile.png'
+import firebase from 'firebase'
+import 'firebase/firestore';
 
 
 const styles = StyleSheet.create({
@@ -73,6 +75,7 @@ export default class Actions extends React.Component {
 		  east: null,
 		  west: null,
 	  }
+	  this.firestore = firebase.firestore()
   }
 
   componentDidMount() {
@@ -91,6 +94,7 @@ export default class Actions extends React.Component {
 		  (error) => this.setState({ error: error.message }),
 		  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
 	  );
+
   }
 
 	componentWillUnmount() {
@@ -134,6 +138,8 @@ export default class Actions extends React.Component {
 			  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
 		  )
 	  , 5000);
+  	// Set reference to firestore document
+	  this.docRef = this.firestore.doc('events/location')
   }
 
   // updates the geoPath and the geoBox
@@ -152,6 +158,16 @@ export default class Actions extends React.Component {
 		  this.geoBox.north = latitude}
 	  if (this.geoBox.south === null || latitude < this.geoBox.south ) {
 		  this.geoBox.south = latitude}
+  }
+
+  savePath() {
+  	this.docRef.set({
+		  point: this.geoPath[0]
+	  }).then(
+		  () => console.log('success!')
+	  ).catch(
+	  	(error) => console.log('ERROR!', error)
+	  )
   }
 
   render() {
@@ -174,6 +190,7 @@ export default class Actions extends React.Component {
 			  buttonText = 'End Trip'
 			  break
 		  case 'after':
+		  	this.savePath()
 			  clearInterval(this.recordID)
 			  this.recording = false
 			  buttonStyle = styles.after
