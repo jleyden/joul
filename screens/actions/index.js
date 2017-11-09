@@ -177,7 +177,8 @@ export default class Actions extends React.Component {
   }
 
   render() {
-  	const screenProps = this.props.screenProps
+  	// update the user
+  	this.user = this.props.screenProps.user
     const currStatus = this.state.status
     let buttonStyle, buttonText, pathBox
 
