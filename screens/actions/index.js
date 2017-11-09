@@ -110,6 +110,7 @@ export default class Actions extends React.Component {
         this.setState({status: 'after'})
         break
       case 'after':
+	      this.savePath()
         this.setState({status: 'before'})
         break
       default:
@@ -132,7 +133,7 @@ export default class Actions extends React.Component {
 					  geoLoaded: true,
 					  error: null,
 					  geoPath: this.state.geoPath.concat({
-						  time: Date.now(),
+						  time: new Date(),
 						  latitude: position.coords.latitude,
 						  longitude: position.coords.longitude
 					  })
@@ -162,11 +163,14 @@ export default class Actions extends React.Component {
   savePath() {
   	this.firestore.collection(`users/${this.user.uid}/events`).add({
 		  type: 'transit',
-		  time: Date.now(),
+		  time: new Date(),
 		  path: this.state.geoPath
 	  }).then(function(docRef) {
 		  console.log("Document written with ID: ", docRef.id);
-	  })
+		  this.setState({
+			  geoPath: []
+		  })
+	  }.bind(this))
 		  .catch(function(error) {
 			  console.error("Error adding document: ", error);
 		  });
@@ -180,7 +184,6 @@ export default class Actions extends React.Component {
 	  // If we're in the 'during' status, we want to start recording the path
 	  switch (currStatus) {
 		  case 'before':
-		  	this.geoPath = []
 			  buttonStyle = styles.start
 			  buttonText = 'Start Trip'
 			  break
@@ -193,7 +196,6 @@ export default class Actions extends React.Component {
 			  buttonText = 'End Trip'
 			  break
 		  case 'after':
-		  	this.savePath()
 			  clearInterval(this.recordID)
 			  this.recording = false
 			  buttonStyle = styles.after

@@ -6,9 +6,6 @@ import { register } from '../../../redux/actions/auth';
 import firebase from 'firebase';
 
 
-
-
-
 class Login extends React.Component {
     constructor (props) {
         super(props);
