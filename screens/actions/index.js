@@ -66,9 +66,9 @@ export default class Actions extends React.Component {
 	    },
 	    geoLoaded: false,
 	    error: null,
+	    geoPath: []
     }
     this.recording = false
-	  this.geoPath = []
 	  this.geoBox = {
     	north: null,
 		  south: null,
@@ -94,7 +94,7 @@ export default class Actions extends React.Component {
 		  (error) => this.setState({ error: error.message }),
 		  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
 	  );
-
+	  this.user = this.props.screenProps.user
   }
 
 	componentWillUnmount() {
@@ -131,24 +131,22 @@ export default class Actions extends React.Component {
 					  },
 					  geoLoaded: true,
 					  error: null,
+					  geoPath: this.state.geoPath.concat({
+						  time: Date.now(),
+						  latitude: position.coords.latitude,
+						  longitude: position.coords.longitude
+					  })
 				  })
-				  this.updatePath(position.coords.latitude, position.coords.longitude)
+				  this.updateGeoBox(position.coords.latitude, position.coords.longitude)
 			  },
 			  (error) => this.setState({ error: error.message }),
 			  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
 		  )
 	  , 5000);
-  	// Set reference to firestore document
-	  this.docRef = this.firestore.doc('events/location')
   }
 
-  // updates the geoPath and the geoBox
-  updatePath(latitude, longitude) {
-	  this.geoPath.push({
-		  time: Date.now(),
-		  latitude: latitude,
-		  longitude: longitude
-	  })
+  // updates the geoBox
+  updateGeoBox(latitude, longitude) {
 	  // expand the geoBox if needed
 	  if (this.geoBox.east === null || longitude < this.geoBox.east ) {
 	  	this.geoBox.east = longitude}
@@ -160,17 +158,22 @@ export default class Actions extends React.Component {
 		  this.geoBox.south = latitude}
   }
 
+  // Save the geopath to the firestore events database of the user
   savePath() {
-  	this.docRef.set({
-		  point: this.geoPath[0]
-	  }).then(
-		  () => console.log('success!')
-	  ).catch(
-	  	(error) => console.log('ERROR!', error)
-	  )
+  	this.firestore.collection(`users/${this.user.uid}/events`).add({
+		  type: 'transit',
+		  time: Date.now(),
+		  path: this.state.geoPath
+	  }).then(function(docRef) {
+		  console.log("Document written with ID: ", docRef.id);
+	  })
+		  .catch(function(error) {
+			  console.error("Error adding document: ", error);
+		  });
   }
 
   render() {
+  	const screenProps = this.props.screenProps
     const currStatus = this.state.status
     let buttonStyle, buttonText, pathBox
 
@@ -183,7 +186,7 @@ export default class Actions extends React.Component {
 			  break
 		  case 'during':
 		  	if (!this.recording) {
-				  this.updatePath(this.state.position.latitude, this.state.position.longitude)
+				  this.updateGeoBox(this.state.position.latitude, this.state.position.longitude)
 				  this.startRecording()
 			  }
 			  buttonStyle = styles.during
@@ -233,13 +236,13 @@ export default class Actions extends React.Component {
 					        coordinate={this.state.position}
 				          image={locationIcon}
 				        />
-				        {this.state.status !== 'before' && this.geoPath.length >= 2 ?
+				        {this.state.status !== 'before' && this.state.geoPath.length >= 2 ?
 					        // The line of the path the user is taking
 				          <MapView.Polyline
 					          strokeColor="#009688"
 					          strokeWidth={5}
 					          coordinates={
-				          	this.geoPath.map((point) => {
+				          	this.state.geoPath.map((point) => {
 				          return {
 				          	latitude: point.latitude,
 					          longitude: point.longitude }}

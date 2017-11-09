@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 import { TabNavigator } from 'react-navigation'
-import { connect } from 'react-redux';
+import firebase from 'firebase'
 
 import Actions from './actions/index'
 import Community from './community/index'
@@ -32,12 +31,32 @@ const App = TabNavigator({
 
 export default class Secured extends React.Component {
 
-    render() {
-        return (
-            //<Register/>
-            //<Login/>
-             <App/>
-        );
-    }
+	constructor() {
+		super()
+		this.state = {
+			user: null
+		}
+		this.updateUser = this.updateUser.bind(this)
+	}
+
+	updateUser(user) {
+		if (user) {
+			this.setState({ user })
+		} else {
+			console.log('signed out')
+		}
+	}
+
+	componentWillMount() {
+		firebase.auth().onAuthStateChanged(
+			this.updateUser
+		)
+	}
+
+	render() {
+    return (
+         <App screenProps={this.state}/>
+    );
+  }
 }
 
