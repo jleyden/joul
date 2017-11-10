@@ -4,22 +4,22 @@ import { connect } from 'react-redux';
 import { login } from '../../../redux/actions/auth';
 import { register } from '../../../redux/actions/auth';
 import firebase from 'firebase';
-
-
-
+import 'firebase/firestore';
 
 
 class Login extends React.Component {
     constructor (props) {
-        super(props);
-        this.state = {
-            route: 'Register',
-            loaded: true,
-            username: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-        };
+      super(props);
+	    this.state = {
+		    route: 'Register',
+		    loaded: true,
+		    username: '',
+		    email: '',
+		    password: '',
+		    confirmPassword: '',
+	    };
+	    this.username = null
+	    this.firestore = firebase.firestore()
     }
 
     checkFormsAndRegister (e) {
@@ -67,6 +67,7 @@ class Login extends React.Component {
             this.signup();
             var email = this.state.email;
             var pass = this.state.password;
+            this.username = this.state.username
             this.setState({
                 username: '',
                 email: '',
@@ -80,17 +81,35 @@ class Login extends React.Component {
     }
 
     // A method to passs the username and password to firebase and make a new user account
-    signup() {
-        this.setState({
-            // When waiting for the firebase server show the loading indicator.
-            loaded: false
-        });
-        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-            .then(() => { this.setState({ error: '', loaded: true }); })
-            .catch(() => {
-                this.setState({ error: 'Authentication failed.', loaded: true });
-            });
-    }
+	  signup() {
+	    this.setState({
+	      // When waiting for the firebase server show the loading indicator.
+	      loaded: false
+	    });
+	    firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+	      .then((user) => {
+	    	  user.updateProfile({
+			      displayName: this.username
+		      }).catch((error) => console.log(error))
+		      this.firestore.collection('users').doc(user.uid).set({
+	          username: this.username,
+	          email: user.email,
+	          dateAdded: new Date()
+	        }).then( () => {
+			        this.username = null
+			        console.log('user added to database!')
+		        }
+	        ).catch( (error) => {
+			        this.username = null
+			        console.log('user addition failed.')
+		        }
+	        )
+	        this.setState({ error: '', loaded: true })
+	      }).catch((error) => {
+	    	  console.log(error)
+          this.setState({ error: 'Authentication failed.', loaded: true });
+	        });
+	  }
 
 
     render() {
