@@ -18,7 +18,6 @@ class Login extends React.Component {
 		    password: '',
 		    confirmPassword: '',
 	    };
-	    this.username = null
 	    this.firestore = firebase.firestore()
     }
 
@@ -81,7 +80,7 @@ class Login extends React.Component {
 			      displayName: this.state.username
 		      }).catch((error) => console.log(error))
 		      this.firestore.collection('users').doc(user.uid).set({
-	          username: this.username,
+	          username: this.state.username,
 	          email: user.email,
 	          dateAdded: new Date(),
 			      wallet: 0,
@@ -100,7 +99,6 @@ class Login extends React.Component {
 				      this.props.onLogin(email, pass);
 			      }
 	        ).catch((error) => {
-			        this.username = null
 			        console.log('user addition failed.')
 		        }
 	        )
