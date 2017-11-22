@@ -94,12 +94,14 @@ class Login extends React.Component {
 		      this.firestore.collection('users').doc(user.uid).set({
 	          username: this.username,
 	          email: user.email,
-	          dateAdded: new Date()
+	          dateAdded: new Date(),
+			      wallet: 0,
+			      rating: 0
 	        }).then( () => {
 			        this.username = null
 			        console.log('user added to database!')
 		        }
-	        ).catch( (error) => {
+	        ).catch((error) => {
 			        this.username = null
 			        console.log('user addition failed.')
 		        }
