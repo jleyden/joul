@@ -6,7 +6,6 @@ import { Container, Header, Content,
    Thumbnail } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import firebase from 'firebase'
-import functions from 'firebase-functions'
 
 import defaultPic from './icons/emoji.png'
 
@@ -21,7 +20,6 @@ export default class App extends React.Component {
 	}
 
 	componentWillMount() {
-		firebase.auth().onAuthStateChanged(this.updateUser)
 	}
 
 	updateUser(user) {
@@ -33,7 +31,7 @@ export default class App extends React.Component {
 	}
 
   render() {
-  	const user = this.state.user
+  	const user = this.props.screenProps.user
     return (
       <Container style={styles.container}>
         <Header>

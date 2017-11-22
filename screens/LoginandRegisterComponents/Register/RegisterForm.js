@@ -65,17 +65,6 @@ class Login extends React.Component {
                 loaded: false
             })
             this.signup();
-            var email = this.state.email;
-            var pass = this.state.password;
-            this.username = this.state.username
-            this.setState({
-                username: '',
-                email: '',
-                password: '',
-                confirmPassword: '',
-                loaded: true,
-            });
-            this.props.onLogin(email, pass);
         }
         e.preventDefault();
     }
@@ -89,7 +78,7 @@ class Login extends React.Component {
 	    firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
 	      .then((user) => {
 	    	  user.updateProfile({
-			      displayName: this.username
+			      displayName: this.state.username
 		      }).catch((error) => console.log(error))
 		      this.firestore.collection('users').doc(user.uid).set({
 	          username: this.username,
@@ -98,15 +87,23 @@ class Login extends React.Component {
 			      wallet: 0,
 			      rating: 0
 	        }).then( () => {
-			        this.username = null
 			        console.log('user added to database!')
-		        }
+				      var email = this.state.email;
+				      var pass = this.state.password;
+				      this.setState({
+					      username: '',
+					      email: '',
+					      password: '',
+					      confirmPassword: '',
+					      loaded: true,
+				      });
+				      this.props.onLogin(email, pass);
+			      }
 	        ).catch((error) => {
 			        this.username = null
 			        console.log('user addition failed.')
 		        }
 	        )
-	        this.setState({ error: '', loaded: true })
 	      }).catch((error) => {
 	    	  console.log(error)
           this.setState({ error: 'Authentication failed.', loaded: true });
