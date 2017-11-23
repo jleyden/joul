@@ -1,87 +1,108 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Container, Header, Content,
-   List, ListItem, Text, Icon, 
+import { StyleSheet, View, ScrollView } from 'react-native';
+import { Container, Header, Content, Text, Icon,
    Left, Body, Right, Switch, Title,
    Thumbnail } from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid';
 import firebase from 'firebase'
+import 'firebase/firestore';
+import { List, ListItem } from 'react-native-elements'
 
 import defaultPic from './icons/emoji.png'
+
 
 export default class App extends React.Component {
 
 	constructor() {
 		super()
 		this.state = {
-			user: null
+			user: null,
+			events: null,
+			userData: null
 		}
-		this.updateUser = this.updateUser.bind(this)
+		this.firestore = firebase.firestore()
 	}
 
-	componentWillMount() {
+	loadUser() {
+		const userRef = this.props.screenProps.fireStoreRefs.user
+		userRef.get().then( (doc) => {
+			this.setState({
+				userData: doc.data()
+			})
+			}
+		)
 	}
 
-	updateUser(user) {
-		if (user) {
-			this.setState({ user })
-		} else {
-			console.log('signed out')
-		}
+	// loadEvents() {
+	// 	const eventsRef = this.props.screenProps.fireStoreRefs.events
+	// 	const eventList = []
+	// 	eventsRef.orderBy("time", "desc").get().then((querySnapshot) => {
+	// 		querySnapshot.forEach( (doc) => eventList.push(doc.data()))
+	// 		this.setState({
+	// 			events: eventList
+	// 		})
+	// 		}
+	// 	)
+	// }
+
+	updateEvents() {
+		const eventsRef = this.props.screenProps.fireStoreRefs.events
+		const eventList = []
+		eventsRef.orderBy("time", "desc").onSnapshot(
+			(querySnapshot) => {
+				querySnapshot.forEach( (doc) => eventList.push(doc.data()))
+				this.setState({
+					events: eventList
+				})
+			}
+		)
 	}
 
   render() {
   	const user = this.props.screenProps.user
+	  if (user && !this.state.userData) {
+  		this.loadUser()
+	  }
+	  if (!this.state.events && user) {
+		  this.updateEvents()
+	  }
+	  const userData = this.state.userData
+	  const events = this.state.events
+	  let rating
+	  let wallet
+	  if (userData) {
+  		rating = userData.rating.toString()
+		  wallet = userData.wallet.toString()
+	  }
+	  if (events) {
+  		console.log(events)
+	  }
     return (
       <Container style={styles.container}>
         <Header>
           <Left>
-            <Text style={styles.rating}>Rating</Text>
+            <Text style={styles.rating}>{`Rating: ${rating}`}</Text>
           </Left>
           <Body>
             <Title style={styles.displayName}>{user ? user.displayName : null}</Title>
           </Body>
           <Right>
-            <Text style={styles.money}>$300.00</Text>
+            <Text style={styles.money}>{`${wallet} jouls`}</Text>
           </Right>
         </Header>
-          <Content>
-            <Grid>
-              <Row style={styles.topRow}>
-                <Body>
-                  <Thumbnail large source={defaultPic} />
-                </Body>
-              </Row>
-              <Row>
-                <List style={styles.list}>
-                  <ListItem icon>
-                    <Body>
-                      <Text>User 1</Text>
-                    </Body>
-                    <Right>
-                      <Text>+$1.00</Text>
-                    </Right>
-                  </ListItem>
-                  <ListItem icon>
-                    <Body>
-                      <Text>User 2</Text>
-                    </Body>
-                    <Right>
-                      <Text>-$1.00</Text>
-                    </Right>
-                  </ListItem>
-                  <ListItem icon>
-                    <Body>
-                      <Text>AC Transit</Text>
-                    </Body>
-                    <Right>
-                      <Text>+$300.00</Text>
-                    </Right>
-                  </ListItem>
-                </List>
-              </Row>
-            </Grid>
-          </Content>
+	      <ScrollView>
+		      <List containerStyle={{marginBottom: 20}}>
+			      { events ?
+				      events.map((event, i) => (
+					      <ListItem style={{height: 75}}
+					                key={i}
+					                title={event.type}
+					                subtitle={event.time.toString()}
+					                rightTitle={event.jouls.toString()}
+					      />
+				      )) : null
+			      }
+		      </List>
+	      </ScrollView>
       </Container>
     );
   }

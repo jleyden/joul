@@ -164,7 +164,9 @@ export default class Actions extends React.Component {
   	this.firestore.collection(`users/${this.user.uid}/events`).add({
 		  type: 'transit',
 		  time: new Date(),
-		  path: this.state.geoPath
+		  path: this.state.geoPath,
+		  validation: 'pending',
+		  jouls: 0
 	  }).then(function(docRef) {
 		  console.log("Document written with ID: ", docRef.id);
 		  this.setState({
