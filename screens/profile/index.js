@@ -5,12 +5,33 @@ import { Container, Header, Content,
    Left, Body, Right, Switch, Title,
    Thumbnail } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
+import firebase from 'firebase'
 
 import defaultPic from './icons/emoji.png'
 
 export default class App extends React.Component {
-  render() {
 
+	constructor() {
+		super()
+		this.state = {
+			user: null
+		}
+		this.updateUser = this.updateUser.bind(this)
+	}
+
+	componentWillMount() {
+	}
+
+	updateUser(user) {
+		if (user) {
+			this.setState({ user })
+		} else {
+			console.log('signed out')
+		}
+	}
+
+  render() {
+  	const user = this.props.screenProps.user
     return (
       <Container style={styles.container}>
         <Header>
@@ -18,7 +39,7 @@ export default class App extends React.Component {
             <Text style={styles.rating}>Rating</Text>
           </Left>
           <Body>
-            <Title>Username</Title>
+            <Title style={styles.displayName}>{user ? user.displayName : null}</Title>
           </Body>
           <Right>
             <Text style={styles.money}>$300.00</Text>
@@ -88,6 +109,9 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 18,
   },
+	displayName: {
+  	fontSize: 20
+	},
   list: {
     width: '100%'
   }, 

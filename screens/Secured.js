@@ -1,6 +1,7 @@
 import React from 'react';
 import { TabNavigator } from 'react-navigation'
 import firebase from 'firebase'
+import 'firebase/firestore';
 
 import Actions from './actions/index'
 import Community from './community/index'

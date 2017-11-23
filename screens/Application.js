@@ -9,14 +9,14 @@ import firebase from 'firebase';
 
 class Application extends React.Component {
     componentWillMount() {
-        firebase.initializeApp({
-            apiKey: "AIzaSyCyMpjgbuOf2tVH6aOKYxg3jMOG7nQPlSA",
-            authDomain: "joul-3afc1.firebaseapp.com",
-            databaseURL: "https://joul-3afc1.firebaseio.com",
-            projectId: "joul-3afc1",
-            storageBucket: "joul-3afc1.appspot.com",
-            messagingSenderId: "870174821785"
-        })
+		    firebase.initializeApp({
+			    apiKey: "AIzaSyCyMpjgbuOf2tVH6aOKYxg3jMOG7nQPlSA",
+			    authDomain: "joul-3afc1.firebaseapp.com",
+			    databaseURL: "https://joul-3afc1.firebaseio.com",
+			    projectId: "joul-3afc1",
+			    storageBucket: "joul-3afc1.appspot.com",
+			    messagingSenderId: "870174821785"
+		    })
     }
 
     render() {
