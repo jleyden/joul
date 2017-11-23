@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native'; 
+import { StyleSheet, Text, View, Button } from 'react-native';
 
 export default class Market extends React.Component {
 
@@ -11,6 +11,10 @@ export default class Market extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.bigText}>Market Screen</Text>
+        <Button
+            onPress={() => this.props.navigation.navigate('Post', { })}
+            title="Sell Something"
+        />
       </View>
     );
   }
