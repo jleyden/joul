@@ -1,11 +1,14 @@
 import React from 'react';
-import { TabNavigator } from 'react-navigation'
+import { StackNavigator, TabNavigator } from 'react-navigation'
 import firebase from 'firebase'
 
 import Actions from './actions/index'
 import Community from './community/index'
 import Market from './market/index'
 import Profile from './profile/index'
+
+
+
 
 const App = TabNavigator({
     Community: {
@@ -28,6 +31,9 @@ const App = TabNavigator({
     },
 })
 
+const RootNavigator = StackNavigator({
+    Home: { screen: App },
+});
 
 export default class Secured extends React.Component {
 
@@ -55,7 +61,7 @@ export default class Secured extends React.Component {
 
 	render() {
     return (
-         <App screenProps={this.state}/>
+         <RootNavigator screenProps={this.state}/>
     );
   }
 }
