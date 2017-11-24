@@ -19,7 +19,7 @@ export default class Market extends React.Component {
 
 	render() {
 		return (
-			<MarketNavigator/>
+			<MarketNavigator screenProps={this.screenProps}/>
 		);
 	}
 }
