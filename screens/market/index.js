@@ -1,24 +1,29 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
+import { StackNavigator } from 'react-navigation'
+import Post from './post'
+import Postings from './postings'
+
+
+const MarketNavigator = StackNavigator({
+	Postings: { screen: Postings },
+	Post: { screen: Post},
+});
+
 
 export default class Market extends React.Component {
 
-  static navigationOptions = {
-    tabBarLabel: 'Market'
-  }
-  
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.bigText}>Market Screen</Text>
-        <Button
-            onPress={() => this.props.navigation.navigate('Post', { })}
-            title="Sell Something"
-        />
-      </View>
-    );
-  }
+	constructor() {
+		super()
+	}
+
+	render() {
+		return (
+			<MarketNavigator/>
+		);
+	}
 }
+
 
 const styles = StyleSheet.create({
   container: {

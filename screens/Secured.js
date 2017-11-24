@@ -7,7 +7,6 @@ import Actions from './actions/index'
 import Community from './community/index'
 import Market from './market/index'
 import Profile from './profile/index'
-import Post from './market/post'
 
 const App = TabNavigator({
     Community: {
@@ -29,11 +28,6 @@ const App = TabNavigator({
         activeTintColor: '#e91e63',
     },
 })
-
-const RootNavigator = StackNavigator({
-    Home: { screen: App },
-    Post: { screen: Post },
-});
 
 
 export default class Secured extends React.Component {
@@ -62,7 +56,7 @@ export default class Secured extends React.Component {
 
 	render() {
     return (
-         <RootNavigator screenProps={this.state}/>
+         <App screenProps={this.state}/>
     );
   }
 }

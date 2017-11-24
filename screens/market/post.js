@@ -5,6 +5,7 @@ import firebase from 'firebase'
 import 'firebase/firestore';
 
 export default class Post extends React.Component {
+
     render() {
         return (
             <View style={styles.container}>
