@@ -23,7 +23,7 @@ const App = TabNavigator({
     }
 }, {
     tabBarPosition: 'bottom',
-    animationEnabled: true,
+    animationEnabled: false,
     tabBarOptions: {
         activeTintColor: '#e91e63',
     },
@@ -35,16 +35,29 @@ export default class Secured extends React.Component {
 	constructor() {
 		super()
 		this.state = {
-			user: null
+			user: null,
+			fireStoreRefs: {
+				user: null,
+				events: null
+			}
 		}
 		this.updateUser = this.updateUser.bind(this)
+		this.firestore = firebase.firestore()
 	}
 
 	updateUser(user) {
 		if (user) {
-			this.setState({ user })
+			const userRef = this.firestore.collection('users').doc(user.uid)
+			const eventsRef = userRef.collection('events')
+			this.setState({
+				user,
+				fireStoreRefs: {
+					user: userRef,
+					events: eventsRef
+				}
+			})
 		} else {
-			console.log('signed out')
+			console.log('logged out')
 		}
 	}
 

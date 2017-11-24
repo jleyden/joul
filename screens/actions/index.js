@@ -1,14 +1,15 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Image} from 'react-native'
 import { Container, Header, Content,
 	Text, Title,
   Body, Grid, Row, Col} from 'native-base'
 import { Button } from 'react-native-elements'
 import MapView from 'react-native-maps'
-import locationIcon from './smile.png'
 import firebase from 'firebase'
-import 'firebase/firestore';
+import 'firebase/firestore'
 
+import locationIcon from './smile.png'
+import icon from './actions.png'
 
 const styles = StyleSheet.create({
 	container: {
@@ -54,6 +55,19 @@ const styles = StyleSheet.create({
 
 
 export default class Actions extends React.Component {
+
+	static navigationOptions = {
+		tabBarLabel: 'Actions',
+		tabBarIcon: ({ tintColor }) => (
+			<Image
+				source={icon}
+				style={{
+					tintColor: tintColor,
+					height: 26,
+					width: 26
+				}}
+			/>)
+	};
 
   constructor() {
     super()
@@ -164,7 +178,9 @@ export default class Actions extends React.Component {
   	this.firestore.collection(`users/${this.user.uid}/events`).add({
 		  type: 'transit',
 		  time: new Date(),
-		  path: this.state.geoPath
+		  path: this.state.geoPath,
+		  validation: 'pending',
+		  jouls: 0,
 	  }).then(function(docRef) {
 		  console.log("Document written with ID: ", docRef.id);
 		  this.setState({

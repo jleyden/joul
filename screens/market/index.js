@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import { StackNavigator } from 'react-navigation'
 import Post from './post'
 import Postings from './postings'
+import icon from './market.png'
 
 
 const MarketNavigator = StackNavigator({
@@ -17,6 +18,19 @@ export default class Market extends React.Component {
 		super()
 	}
 
+    static navigationOptions = {
+    	tabBarLabel: 'Market',
+    	tabBarIcon: ({ tintColor }) => (
+    	<Image
+			source={icon}
+			style={{
+				tintColor: tintColor,
+				height: 26,
+        		width: 26
+    		}}
+    	/>)
+	};
+
 	render() {
 		return (
 			<MarketNavigator screenProps={this.props.screenProps}/>
@@ -27,13 +41,13 @@ export default class Market extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
+	flex: 1,
+	backgroundColor: '#fff',
+	alignItems: 'center',
+	justifyContent: 'center'
   },
   bigText: {
-    color: '#009688',
-    fontSize: 30
+	color: '#009688',
+	fontSize: 30
   }
-});
+	});
