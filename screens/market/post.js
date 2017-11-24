@@ -28,19 +28,19 @@ export default class Post extends React.Component {
     }
     savePosting() {
         console.log("saving posting");
-        // this.firestore.collection(`market`).add({
-        //     available: true,
-        //     time: new Date(),
-        //     path: this.state.geoPath
-        // }).then(function(docRef) {
-        //     console.log("Document written with ID: ", docRef.id);
-        //     this.setState({
-        //         geoPath: []
-        //     })
-        // }.bind(this))
-        //     .catch(function(error) {
-        //         console.error("Error adding document: ", error);
-        //     });
+        this.firestore.collection(`market`).add({
+            available: true,
+            time: new Date(),
+            path: this.state.geoPath
+        }).then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+            this.setState({
+                geoPath: []
+            })
+        }.bind(this))
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
+            });
     }
 
     render() {
