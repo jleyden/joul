@@ -1,14 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, Image} from 'react-native';
 import { Container, Header, Content, Text, Icon,
    Left, Body, Right, Switch, Title,
    Thumbnail } from 'native-base';
 import firebase from 'firebase'
 import 'firebase/firestore';
 import { List, ListItem } from 'react-native-elements'
-
-import defaultPic from './icons/emoji.png'
-
 
 export default class App extends React.Component {
 
@@ -20,6 +17,11 @@ export default class App extends React.Component {
 			userData: null
 		}
 		this.firestore = firebase.firestore()
+		this.badgeColors = {
+			approved: '#009688',
+			pending: '#FFEB3B',
+			disapproved: '#FF5722'
+		}
 	}
 
 	loadUser() {
@@ -32,24 +34,15 @@ export default class App extends React.Component {
 		)
 	}
 
-	// loadEvents() {
-	// 	const eventsRef = this.props.screenProps.fireStoreRefs.events
-	// 	const eventList = []
-	// 	eventsRef.orderBy("time", "desc").get().then((querySnapshot) => {
-	// 		querySnapshot.forEach( (doc) => eventList.push(doc.data()))
-	// 		this.setState({
-	// 			events: eventList
-	// 		})
-	// 		}
-	// 	)
-	// }
 
 	updateEvents() {
 		const eventsRef = this.props.screenProps.fireStoreRefs.events
-		const eventList = []
 		eventsRef.orderBy("time", "desc").onSnapshot(
 			(querySnapshot) => {
-				querySnapshot.forEach( (doc) => eventList.push(doc.data()))
+				const eventList = []
+				querySnapshot.forEach( (doc) => {
+					eventList.push(doc.data())
+				})
 				this.setState({
 					events: eventList
 				})
@@ -74,7 +67,6 @@ export default class App extends React.Component {
 		  wallet = userData.wallet.toString()
 	  }
 	  if (events) {
-  		console.log(events)
 	  }
     return (
       <Container style={styles.container}>
@@ -90,14 +82,23 @@ export default class App extends React.Component {
           </Right>
         </Header>
 	      <ScrollView>
-		      <List containerStyle={{marginBottom: 20}}>
+		      <List containerStyle={styles.list}>
 			      { events ?
 				      events.map((event, i) => (
-					      <ListItem style={{height: 75}}
+					      <ListItem containerStyle={styles.listItem}
+					                titleStyle={styles.listTitle}
 					                key={i}
 					                title={event.type}
-					                subtitle={event.time.toString()}
-					                rightTitle={event.jouls.toString()}
+					                subtitle={event.time.toDateString()}
+					                badge={{
+					                	value: event.jouls,
+						                textStyle: {
+							                color: '#212121',
+							                fontWeight: 'bold'
+						                },
+					                  containerStyle: {
+					                		backgroundColor: this.badgeColors[event.validation]
+					                  }}}
 					      />
 				      )) : null
 			      }
@@ -134,9 +135,16 @@ const styles = StyleSheet.create({
   	fontSize: 20
 	},
   list: {
-    width: '100%'
+    margin: 20
   }, 
-  topRow: {
-    padding: 20
-  }
+  listItem: {
+  	height: 75,
+	  borderStyle: 'solid',
+	  borderWidth: 5,
+	  borderColor: '#242424',
+	  padding: 5
+  },
+	listTitle: {
+  	color: '#009688'
+	}
 });

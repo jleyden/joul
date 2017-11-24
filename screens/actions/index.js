@@ -5,10 +5,10 @@ import { Container, Header, Content,
   Body, Grid, Row, Col} from 'native-base'
 import { Button } from 'react-native-elements'
 import MapView from 'react-native-maps'
-import locationIcon from './smile.png'
 import firebase from 'firebase'
-import 'firebase/firestore';
+import 'firebase/firestore'
 
+import locationIcon from './smile.png'
 
 const styles = StyleSheet.create({
 	container: {
@@ -166,7 +166,7 @@ export default class Actions extends React.Component {
 		  time: new Date(),
 		  path: this.state.geoPath,
 		  validation: 'pending',
-		  jouls: 0
+		  jouls: 0,
 	  }).then(function(docRef) {
 		  console.log("Document written with ID: ", docRef.id);
 		  this.setState({
