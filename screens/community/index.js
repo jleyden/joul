@@ -1,12 +1,22 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image} from 'react-native';
 
+import icon from './community.png'
 
 export default class Community extends React.Component {
 
-  static navigationOptions = {
-    tabBarLabel: 'Community'
-  }
+	static navigationOptions = {
+		tabBarLabel: 'Community',
+		tabBarIcon: ({ tintColor }) => (
+			<Image
+				source={icon}
+				style={{
+					tintColor: tintColor,
+					height: 26,
+					width: 26
+				}}
+			/>)
+	};
 
   render() {
     return (
