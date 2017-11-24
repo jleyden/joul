@@ -12,7 +12,7 @@ class Login extends React.Component {
         this.state = {
             loading: false,
             route: 'Login',
-            email: '',
+            email: '', 
             password: '',
             loginSuccessful: false
         };
