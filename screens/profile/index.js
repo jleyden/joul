@@ -7,7 +7,22 @@ import firebase from 'firebase'
 import 'firebase/firestore';
 import { List, ListItem } from 'react-native-elements'
 
-export default class App extends React.Component {
+import icon from './profile.png'
+
+export default class Profile extends React.Component {
+
+	static navigationOptions = {
+		tabBarLabel: 'Profile',
+		tabBarIcon: ({ tintColor }) => (
+			<Image
+				source={icon}
+			  style={{
+			  	tintColor: tintColor,
+				  height: 26,
+				  width: 26
+			  }}
+			/>)
+	};
 
 	constructor() {
 		super()

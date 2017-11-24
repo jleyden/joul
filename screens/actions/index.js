@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Image} from 'react-native'
 import { Container, Header, Content,
 	Text, Title,
   Body, Grid, Row, Col} from 'native-base'
@@ -9,6 +9,7 @@ import firebase from 'firebase'
 import 'firebase/firestore'
 
 import locationIcon from './smile.png'
+import icon from './actions.png'
 
 const styles = StyleSheet.create({
 	container: {
@@ -54,6 +55,19 @@ const styles = StyleSheet.create({
 
 
 export default class Actions extends React.Component {
+
+	static navigationOptions = {
+		tabBarLabel: 'Actions',
+		tabBarIcon: ({ tintColor }) => (
+			<Image
+				source={icon}
+				style={{
+					tintColor: tintColor,
+					height: 26,
+					width: 26
+				}}
+			/>)
+	};
 
   constructor() {
     super()
