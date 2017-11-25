@@ -46,7 +46,6 @@ export default class Post extends React.Component {
   savePosting() {
     console.log("saving posting");
     let timestamp = new Date();
-    let docref = null;
     this.firestore.collection('market').add({
       available: true,
 	    title: this.state.title,
@@ -55,7 +54,7 @@ export default class Post extends React.Component {
       price: this.state.price,
       user: this.props.screenProps.fireStoreRefs.user,
     }).then(function(docRef) {
-      this.refPostToUser(timestamp, docref);
+      this.refPostToUser(timestamp, docRef);
     }.bind(this))
       .catch(function(error) {
 	      Alert.alert(
