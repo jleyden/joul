@@ -53,9 +53,9 @@ export default class Post extends React.Component {
       description: this.state.description,
       price: this.state.price,
       user: this.props.screenProps.fireStoreRefs.user,
-    }).then(function(docRef) {
+    }).then((docRef) => {
       this.refPostToUser(timestamp, docRef);
-    }.bind(this))
+    })
       .catch(function(error) {
 	      Alert.alert(
 		      'Error',
