@@ -4,6 +4,7 @@ import Secured from './Secured';
 import Login from './LoginandRegisterComponents/Login/Login';
 import Register from './LoginandRegisterComponents/Register/Register';
 import firebase from 'firebase';
+import Post from './market/post';
 
 
 
