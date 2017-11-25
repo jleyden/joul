@@ -13,7 +13,7 @@ export default class Postings extends React.Component {
 			<View style={styles.container}>
 				<Text style={styles.bigText}>Market Screen</Text>
 				<TouchableOpacity
-					onPress={() => this.props.navigation.navigate('Post', { })}
+					onPress={() => this.props.navigation.navigate('Post', {})}
 					style={styles.buttonContainer}>
 					<Text style={styles.buttonText}>Sell Something</Text>
 				</TouchableOpacity>
