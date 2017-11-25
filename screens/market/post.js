@@ -12,36 +12,53 @@ export default class Post extends React.Component {
             description: '',
             price: 0,
             user: '',
+            // docref: '',
         };
         this.firestore = firebase.firestore()
     }
     componentDidMount() {
         this.setState({
-            user: this.props.screenProps.user
+            user: this.props.screenProps.user,
         })
     }
 
 
     checkFields() {
         //check field logic
+
         this.savePosting();
     }
     savePosting() {
         console.log("saving posting");
+        let timestamp = new Date();
+        let docref = null;
         this.firestore.collection(`market`).add({
             available: true,
-            time: new Date(),
-            path: this.state.geoPath
+            time: timestamp,
+            description: this.state.description,
+            price: this.state.price,
+            user: this.props.screenProps.fireStoreRefs.user,
         }).then(function(docRef) {
             console.log("Document written with ID: ", docRef.id);
-            this.setState({
-                geoPath: []
-            })
+            docref = docRef;
+        }.bind(this))
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
+            });
+        this.refPostToUser(timestamp, docref);
+    }
+    refPostToUser(timestamp, docref) {
+        this.firestore.collection(`users/${this.state.user.uid}/items`).add({
+            Time: timestamp,
+            DocRef: docref,
+        }).then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
         }.bind(this))
             .catch(function(error) {
                 console.error("Error adding document: ", error);
             });
     }
+    
 
     render() {
         return (
@@ -64,10 +81,10 @@ export default class Post extends React.Component {
                         placeholderTextColor="rgba(255,255,255,0.8)"
                         returnKeyType="next"
                         style={styles.input}
-                        keyboardType='numbers-and-punctuation'
+                        keyboardType='numeric'
                         autoCorrect={false}
                         value={this.state.price}
-                        onChangeText={(text) => this.setState({ price: text })}
+                        onChangeText={(text) => this.setState({ price: parseFloat(text) })}
                         ref={(input) => this.priceInput = input}
                         onSubmitEditing={() => this.descriptionInput.focus()}
                     />
