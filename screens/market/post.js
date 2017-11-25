@@ -1,63 +1,96 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
-import { StackNavigator, TabNavigator } from 'react-navigation'
+import { StyleSheet, Text, View, Button,
+	TouchableOpacity, TextInput, KeyboardAvoidingView, Alert } from 'react-native';
+import { NavigationActions } from 'react-navigation'
+import { Container, Header, Content, Title, Body } from 'native-base'
 import firebase from 'firebase'
 import 'firebase/firestore';
 
 export default class Post extends React.Component {
-    constructor() {
-        super()
-        this.state = {
-            title: '',
-            description: '',
-            price: 0,
-            user: '',
-            // docref: '',
-        };
-        this.firestore = firebase.firestore()
-    }
-    componentDidMount() {
-        this.setState({
-            user: this.props.screenProps.user,
-        })
-    }
+
+	static navigationOptions = {
+		headerTitle: 'Post for sale',
+	}
+
+  constructor() {
+    super()
+    this.state = {
+      title: '',
+      description: '',
+      price: '',
+      user: '',
+      // docref: '',
+    };
+    this.firestore = firebase.firestore()
+  }
+
+  componentDidMount() {
+    this.setState({
+      user: this.props.screenProps.user,
+    })
+  }
 
 
-    checkFields() {
-        //check field logic
+  checkFields() {
+		if (!this.state.title) {
+			Alert.alert('Please insert a title')
+		} else if (!this.state.price) {
+			Alert.alert('Please insert a price')
+		} else if (!this.state.description) {
+			Alert.alert('Please insert a description')
+		} else {
+			this.savePosting();
+		}
+  }
 
-        this.savePosting();
-    }
-    savePosting() {
-        console.log("saving posting");
-        let timestamp = new Date();
-        let docref = null;
-        this.firestore.collection(`market`).add({
-            available: true,
-            time: timestamp,
-            description: this.state.description,
-            price: this.state.price,
-            user: this.props.screenProps.fireStoreRefs.user,
-        }).then(function(docRef) {
-            console.log("Document written with ID: ", docRef.id);
-            docref = docRef;
-        }.bind(this))
-            .catch(function(error) {
-                console.error("Error adding document: ", error);
-            });
-        this.refPostToUser(timestamp, docref);
-    }
-    refPostToUser(timestamp, docref) {
-        this.firestore.collection(`users/${this.state.user.uid}/items`).add({
-            Time: timestamp,
-            DocRef: docref,
-        }).then(function(docRef) {
-            console.log("Document written with ID: ", docRef.id);
-        }.bind(this))
-            .catch(function(error) {
-                console.error("Error adding document: ", error);
-            });
-    }
+  savePosting() {
+    console.log("saving posting");
+    let timestamp = new Date();
+    let docref = null;
+    this.firestore.collection('market').add({
+      available: true,
+	    title: this.state.title,
+      time: timestamp,
+      description: this.state.description,
+      price: this.state.price,
+      user: this.props.screenProps.fireStoreRefs.user,
+    }).then(function(docRef) {
+      this.refPostToUser(timestamp, docref);
+    }.bind(this))
+      .catch(function(error) {
+	      Alert.alert(
+		      'Error',
+		      'Please try again later'
+	      )
+	      console.error("Error adding document: ", error);
+      });
+  }
+
+  refPostToUser(timestamp, docref) {
+		const backAction = NavigationActions.back({
+			key: null
+		})
+	  this.firestore.collection(`users/${this.state.user.uid}/items`).add({
+        Time: timestamp,
+        DocRef: docref,
+    }).then(function(docRef) {
+      Alert.alert(
+        'Success',
+	      'Posted to market!',
+	      [
+		      {text: 'OK', onPress: () => this.props.navigation.dispatch(backAction)}
+	      ]
+      )
+      console.log("Document written with ID: ", docRef.id);
+    }.bind(this))
+        .catch(function(error) {
+          Alert.alert(
+            'Error',
+	          'Please try again later'
+          )
+            console.error("Error adding document: ", error);
+        });
+  }
     
 
     render() {

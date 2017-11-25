@@ -5,7 +5,7 @@ import Post from './post'
 export default class Postings extends React.Component {
 
 	static navigationOptions = {
-		tabBarLabel: 'Market'
+		headerTitle: 'Joul Market',
 	}
 
 	render() {
