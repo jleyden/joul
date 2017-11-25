@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
 import Post from './post'
 
 export default class Postings extends React.Component {
@@ -12,10 +12,11 @@ export default class Postings extends React.Component {
 		return (
 			<View style={styles.container}>
 				<Text style={styles.bigText}>Market Screen</Text>
-				<Button
+				<TouchableOpacity
 					onPress={() => this.props.navigation.navigate('Post', { })}
-					title="Sell Something"
-				/>
+					style={styles.buttonContainer}>
+					<Text style={styles.buttonText}>Sell Something</Text>
+				</TouchableOpacity>
 			</View>
 		);
 	}
@@ -31,5 +32,16 @@ const styles = StyleSheet.create({
 	bigText: {
 		color: '#009688',
 		fontSize: 30
-	}
+	},
+    buttonContainer: {
+        backgroundColor: '#336E7B',
+        padding: 15,
+		margin: 10
+    },
+    buttonText: {
+        textAlign: 'center',
+        color: '#FFFFFF',
+        fontWeight: '700',
+		fontSize: 15
+    },
 });

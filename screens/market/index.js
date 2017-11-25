@@ -49,5 +49,9 @@ const styles = StyleSheet.create({
   bigText: {
 	color: '#009688',
 	fontSize: 30
-  }
+  },
+	buttonContainer: {
+		backgroundColor: '#336E7B',
+		paddingVertical: 15
+	},
 	});
