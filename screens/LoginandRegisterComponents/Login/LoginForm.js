@@ -69,6 +69,7 @@ class Login extends React.Component {
                     value={this.state.password}
                     onChangeText={(text) => this.setState({ password: text })}
                     ref={(input) => this.passwordInput = input}
+                    onSubmitEditing={(e) => this.userLogin(e)}
                 />
 
                 <TouchableOpacity onPress={(e) => this.userLogin(e)} title={this.state.route} style={styles.buttonContainer}>

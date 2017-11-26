@@ -4,7 +4,6 @@ import Secured from './Secured';
 import Login from './LoginandRegisterComponents/Login/Login';
 import Register from './LoginandRegisterComponents/Register/Register';
 import firebase from 'firebase';
-import Post from './market/post';
 
 
 
@@ -22,11 +21,11 @@ class Application extends React.Component {
 
     render() {
         if (this.props.isLoggedIn) {
-            return <Secured />;
+          return <Secured />;
         } else if (this.props.register) {
-            return <Register/>
+          return <Register/>
         } else {
-            return <Login />;
+          return <Login />;
         }
     }
 }
