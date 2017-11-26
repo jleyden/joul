@@ -8,7 +8,7 @@ import { List, ListItem } from 'react-native-elements'
 export default class Postings extends React.Component {
 
 	static navigationOptions = {
-		tabBarLabel: 'Market'
+		headerTitle: 'Joul Market',
 	}
   constructor() {
     super()
