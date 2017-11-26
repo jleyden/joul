@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, Image} from 'react-native'
+import { StyleSheet, View, Image, Alert} from 'react-native'
 import { Container, Header, Content,
 	Text, Title,
   Body, Grid, Row, Col} from 'native-base'
@@ -90,6 +90,7 @@ export default class Actions extends React.Component {
 		  west: null,
 	  }
 	  this.firestore = firebase.firestore()
+	  this.eventRef = null
   }
 
   componentDidMount() {
@@ -124,8 +125,12 @@ export default class Actions extends React.Component {
         this.setState({status: 'after'})
         break
       case 'after':
-	      this.savePath()
-        this.setState({status: 'before'})
+      	this.submitEvent()
+	      Alert.alert(null,'Path Submitted')
+        this.setState({
+	        status: 'before',
+	        geoPath: []
+        })
         break
       default:
         this.setState({status: 'before'})
@@ -135,29 +140,34 @@ export default class Actions extends React.Component {
   // This should change to watchPosition() if we find that it actually works
   startRecording() {
   	this.recording = true
+	  this.startEvent()
 	  this.recordID = setInterval( () =>
 		  navigator.geolocation.getCurrentPosition(
 			  (position) => {
 				  console.log('position updating...')
+				  const time = new Date()
+				  const latitude = position.coords.latitude
+				  const longitude = position.coords.longitude
 				  this.setState({
 					  position: {
-						  latitude: position.coords.latitude,
-						  longitude: position.coords.longitude
+						  latitude,
+						  longitude
 					  },
 					  geoLoaded: true,
 					  error: null,
 					  geoPath: this.state.geoPath.concat({
-						  time: new Date(),
-						  latitude: position.coords.latitude,
-						  longitude: position.coords.longitude
+						  time,
+						  latitude,
+						  longitude
 					  })
 				  })
+				  this.updateEvent(time, latitude, longitude)
 				  this.updateGeoBox(position.coords.latitude, position.coords.longitude)
 			  },
 			  (error) => this.setState({ error: error.message }),
 			  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
 		  )
-	  , 5000);
+	  , 10000);
   }
 
   // updates the geoBox
@@ -173,24 +183,44 @@ export default class Actions extends React.Component {
 		  this.geoBox.south = latitude}
   }
 
-  // Save the geopath to the firestore events database of the user
-  savePath() {
-  	this.firestore.collection(`users/${this.user.uid}/events`).add({
+  // initialize the event in firestore
+  startEvent() {
+	  this.firestore.collection(`users/${this.user.uid}/events`).add({
 		  type: 'transit',
 		  time: new Date(),
-		  path: this.state.geoPath,
 		  validation: 'pending',
 		  jouls: 0,
-	  }).then(function(docRef) {
-		  console.log("Document written with ID: ", docRef.id);
-		  this.setState({
-			  geoPath: []
-		  })
-	  }.bind(this))
-		  .catch(function(error) {
+	  }).then((docRef) => {
+	  	console.log('event written!')
+		  this.eventRef = docRef
+	  }).catch(function(error) {
 			  console.error("Error adding document: ", error);
 		  });
   }
+
+	// update the path in firestore
+  updateEvent(time, latitude, longitude) {
+  	const eventId = this.eventRef.id
+	  this.firestore.collection(`users/${this.user.uid}/events/${eventId}/path`).add({
+		  time,
+		  latitude,
+		  longitude
+	  }).then(
+	  	console.log('successfully updated path!')
+	  ).catch( (err) => console.error(err))
+  }
+
+  submitEvent() {
+  	const time = new Date()
+	  const eventId = this.eventRef.id
+	  this.firestore.collection(`users/${this.user.uid}/events/${eventId}/path`).add({
+		  time,
+		  end: true
+	  }).then(
+		  console.log('successfully updated path!')
+	  ).catch( (err) => console.error(err))
+  }
+
 
   render() {
   	// update the user

@@ -9,8 +9,16 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
+    "axios": "^0.17.1",
+    "es6-promise": "^4.1.1",
+    "fetch": "^1.1.0",
+    "firebase": "^4.6.2",
     "firebase-admin": "~5.4.2",
-    "firebase-functions": "^0.7.1"
+    "firebase-functions": "^0.7.1",
+    "grpc": "^1.7.2",
+    "isomorphic-fetch": "^2.2.1",
+    "protobufjs": "^6.8.0",
+    "restbus": "^1.2.0"
   },
   "private": true
 }
