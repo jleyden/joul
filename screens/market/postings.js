@@ -4,19 +4,18 @@ import Post from './post'
 
 export default class Postings extends React.Component {
 
-
 	static navigationOptions = {
 		headerTitle: 'Joul Market',
-		headerRight: 				<Button
-			onPress={() => this.toPost()}
-			title="Sell Something"
-		/>
 	}
 
 	render() {
 		return (
 			<View style={styles.container}>
 				<Text style={styles.bigText}>Market Screen</Text>
+				<Button
+					onPress={() => this.props.navigation.navigate('Post', { })}
+					title="Sell Something"
+				/>
 			</View>
 		);
 	}
