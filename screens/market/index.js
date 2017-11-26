@@ -3,12 +3,14 @@ import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import { StackNavigator } from 'react-navigation'
 import Post from './post'
 import Postings from './postings'
+import Item from './item'
 import icon from './market.png'
 
 
 const MarketNavigator = StackNavigator({
 	Postings: { screen: Postings },
 	Post: { screen: Post},
+	Item: { screen: Item},
 });
 
 

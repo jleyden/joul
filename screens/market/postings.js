@@ -72,14 +72,14 @@ export default class Postings extends React.Component {
                                     titleStyle={styles.listTitle}
                                     key={i}
                                     title={item.title}
-                                    subtitle={item.time.toDateString()}
-                                    badge={{
-                                      value: item.price,
-                                      textStyle: {
-                                        color: '#212121',
-                                        fontWeight: 'bold'
-                                      },
-                                      }}
+                                    subtitle={'$' + item.price}
+                                    onPress={
+                                      () => this.props.navigation.navigate('Item', {
+                                        itemTitle: item.title,
+                                        itemPrice: item.price,
+                                        itemTime: item.time,
+                                        itemDescription: item.description,
+                                      })}
                           />
                       )) : null
                   }
@@ -120,10 +120,10 @@ const styles = StyleSheet.create({
 		padding: 15,
 	},
 	buttonText: {
-			textAlign: 'center',
-			color: '#FFFFFF',
-			fontWeight: '700',
-	fontSize: 15
+    textAlign: 'center',
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 15
 	},
   listItem: {
     height: 75,
