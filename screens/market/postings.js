@@ -15,7 +15,7 @@ export default class Postings extends React.Component {
     this.state = {
       user: null,
       items: null,
-      userData: null
+      userData: null,
     }
     this.firestore = firebase.firestore()
   }
@@ -77,7 +77,7 @@ export default class Postings extends React.Component {
                                       () => this.props.navigation.navigate('Item', {
                                         itemTitle: item.title,
                                         itemPrice: item.price,
-                                        itemTime: item.time,
+                                        sellerRef: item.user,
                                         itemDescription: item.description,
                                       })}
                           />

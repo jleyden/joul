@@ -12,7 +12,8 @@ export default class Item extends React.Component {
     super()
     this.state = {
       user: null,
-      userData: null
+      userData: null,
+      sellerData: null
     }
     this.firestore = firebase.firestore()
   }
@@ -26,6 +27,14 @@ export default class Item extends React.Component {
         }
     )
   }
+  loadSeller(ref) {
+    ref.get().then( (doc) => {
+          this.setState({
+            sellerData: doc.data()
+          })
+        }
+    )
+  }
 
   render() {
     const user = this.props.screenProps.user
@@ -35,7 +44,10 @@ export default class Item extends React.Component {
     const userData = this.state.userData
     const title =  this.props.navigation.state.params.itemTitle
     const price =  this.props.navigation.state.params.itemPrice
-    const time =  this.props.navigation.state.params.itemTime.toDateString()
+    const sellerRef =  this.props.navigation.state.params.sellerRef
+    this.loadSeller(sellerRef)
+    const sellerData = this.state.sellerData
+    console.log(sellerData.username)
     const description =  this.props.navigation.state.params.itemDescription
     return (
         <View style={styles.container}>
@@ -44,12 +56,12 @@ export default class Item extends React.Component {
               <Text style={styles.title}>{title}</Text>
               <Text style={styles.price}>{price}</Text>
             </View>
-            <Text>{time}</Text>
+            {/*<Text>{this.state.sellerData.username}</Text>*/}
+            <Text>Username</Text>
           </View>
           <Text style={styles.descriptionTextBox}>{description}</Text>
           <Text style={styles.emailTextBox}>Email usersEmail for more information</Text>
-          <TouchableOpacity>
-            onPress={() => {}}
+          <TouchableOpacity onPress={() => {}}>
             <Text>BUY</Text>
           </TouchableOpacity>
         </View>
