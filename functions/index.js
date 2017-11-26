@@ -13,7 +13,7 @@ function isValid(userPoint, busPoint) {
 	const latDistance = Math.abs(userPoint.latitude - busPoint.lat)
 	const lonDistance = Math.abs(userPoint.longitude - busPoint.lon)
 	const distance = Math.sqrt(Math.pow(latDistance, 2) + Math.pow(lonDistance, 2))
-	if (distance <= 0.00001) {
+	if (distance <= 0.001) {
 		return true
 	}
 	return false
