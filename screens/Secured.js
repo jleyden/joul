@@ -1,5 +1,5 @@
 import React from 'react';
-import { TabNavigator } from 'react-navigation'
+import { StackNavigator, TabNavigator } from 'react-navigation'
 import firebase from 'firebase'
 import 'firebase/firestore';
 
