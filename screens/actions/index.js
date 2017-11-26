@@ -125,6 +125,7 @@ export default class Actions extends React.Component {
         this.setState({status: 'after'})
         break
       case 'after':
+      	this.submitEvent()
 	      Alert.alert(null,'Path Submitted')
         this.setState({
 	        status: 'before',
@@ -144,20 +145,23 @@ export default class Actions extends React.Component {
 		  navigator.geolocation.getCurrentPosition(
 			  (position) => {
 				  console.log('position updating...')
+				  const time = new Date()
+				  const latitude = position.coords.latitude
+				  const longitude = position.coords.longitude
 				  this.setState({
 					  position: {
-						  latitude: position.coords.latitude,
-						  longitude: position.coords.longitude
+						  latitude,
+						  longitude
 					  },
 					  geoLoaded: true,
 					  error: null,
 					  geoPath: this.state.geoPath.concat({
-						  time: new Date(),
-						  latitude: position.coords.latitude,
-						  longitude: position.coords.longitude
+						  time,
+						  latitude,
+						  longitude
 					  })
 				  })
-				  this.updateEvent()
+				  this.updateEvent(time, latitude, longitude)
 				  this.updateGeoBox(position.coords.latitude, position.coords.longitude)
 			  },
 			  (error) => this.setState({ error: error.message }),
@@ -184,7 +188,6 @@ export default class Actions extends React.Component {
 	  this.firestore.collection(`users/${this.user.uid}/events`).add({
 		  type: 'transit',
 		  time: new Date(),
-		  path: this.state.geoPath,
 		  validation: 'pending',
 		  jouls: 0,
 	  }).then((docRef) => {
@@ -196,13 +199,28 @@ export default class Actions extends React.Component {
   }
 
 	// update the path in firestore
-  updateEvent() {
-  	this.eventRef.update({
-		  path: this.state.geoPath
+  updateEvent(time, latitude, longitude) {
+  	const eventId = this.eventRef.id
+	  this.firestore.collection(`users/${this.user.uid}/events/${eventId}/path`).add({
+		  time,
+		  latitude,
+		  longitude
 	  }).then(
-	  	console.log('successfully updated!')
+	  	console.log('successfully updated path!')
 	  ).catch( (err) => console.error(err))
   }
+
+  submitEvent() {
+  	const time = new Date()
+	  const eventId = this.eventRef.id
+	  this.firestore.collection(`users/${this.user.uid}/events/${eventId}/path`).add({
+		  time,
+		  end: true
+	  }).then(
+		  console.log('successfully updated path!')
+	  ).catch( (err) => console.error(err))
+  }
+
 
   render() {
   	// update the user
