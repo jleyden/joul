@@ -15,7 +15,8 @@ export default class Item extends React.Component {
     this.state = {
       user: null,
       userData: null,
-      sellerData: null
+      seller: null,
+      sellerData: null,
     }
     this.firestore = firebase.firestore()
   }
@@ -37,16 +38,38 @@ export default class Item extends React.Component {
   loadSeller(ref) {
     ref.get().then( (doc) => {
           this.setState({
+            seller: doc,
             sellerData: doc.data()
           })
         }
     )
   }
 	purchase() {
-  	// TODO: Add the buyer's userRef to a collection of buyers within the item document
-		this.alertAndBack()
-	}
+    if (this.state.userData.wallet < this.props.navigation.state.params.itemPrice) {
+      const backAction = NavigationActions.back({
+        key: null
+      })
+      Alert.alert(null, 'You have insufficient jouls!',
+          [
+            {text: 'OK', onPress: () => this.props.navigation.dispatch(backAction)}
+          ])
 
+    } else {
+      this.firestore.collection(`market/${this.props.navigation.state.params.itemID}/buyers`).add({
+        time: new Date(),
+        buyerRef: this.props.screenProps.fireStoreRefs.user,
+        buyerUsername: this.state.userData.username
+      }).then(
+          this.alertAndBack()
+      ).catch(function (error) {
+        Alert.alert(
+            'Error',
+            'Please try again later'
+        )
+        console.error("Error adding document: ", error);
+      });
+    }
+	}
 	alertAndBack() {
 		const backAction = NavigationActions.back({
 			key: null
@@ -63,6 +86,7 @@ export default class Item extends React.Component {
       this.loadUser()
     }
     const userData = this.state.userData
+    const itemID =  this.props.navigation.state.params.itemID
     const title =  this.props.navigation.state.params.itemTitle
     const price =  this.props.navigation.state.params.itemPrice
     const sellerData = this.state.sellerData
