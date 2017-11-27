@@ -19,14 +19,43 @@ function isValid(userPoint, busPoint) {
 	return false
 }
 
-function updateEventValidation(eventRef, validTrip) {
+// Right now, we are awarding 0.1 jouls for every 10 seconds spent on a bus
+function calculateJouls(totalPoints) {
+	return totalPoints / 10.0
+}
+
+function updateUserWallet(userRef, jouls) {
+	userRef.get().then((userDoc) => {
+		const userData = userDoc.data()
+		const currentJouls = userData.wallet
+		const newJouls = currentJouls + jouls
+		userRef.update({
+			wallet: newJouls
+		}).then(console.log('successfully updated user wallet'))
+			.catch((error) => console.error('error updating wallet', error))
+	}).catch((error => console.error('error accessing user', error)))
+}
+
+function updateEventValidation(eventRef, validTrip, jouls) {
 	eventRef.update({
+		jouls,
 		validation: validTrip
 	}).then(
 		console.log('Verified trip with status', validTrip)
 	).catch((error) => {
 		console.error('Error updating event', error)
 	})
+}
+
+// Award jouls and signify a valid trip
+function updateUserData(eventRef, userRef, validTrip, pathLength) {
+	let awardedJouls = 0
+	// only award jouls and update wallet if approved
+	if (validTrip === 'approved') {
+		awardedJouls = calculateJouls(pathLength)
+		updateUserWallet(userRef, awardedJouls)
+	}
+	updateEventValidation(eventRef, validTrip, awardedJouls)
 }
 
 // Looks through the whole path and determine if it is valid
@@ -46,14 +75,18 @@ function readPath(pathRef) {
 					}
 				}
 			})
+
+			// Allow for a 75% approval rate
 			let validTrip = 'disapproved'
 			const validRatio = valid / total
-			// Allow for a 75% approval rate
 			if (validRatio >= 0.75) {
 				validTrip = 'approved'
 			}
+
+			// retrieve user data for updating
 			const eventRef = pathRef.parent
-			updateEventValidation(eventRef, validTrip)
+			const userRef = eventRef.parent.parent
+			updateUserData(eventRef, userRef, validTrip, total)
 			console.log('event has valid ratio:', validRatio)
 		}
 	).catch((error) => {
