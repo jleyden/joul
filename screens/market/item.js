@@ -1,13 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
+import { NavigationActions } from 'react-navigation'
 import firebase from 'firebase'
 import 'firebase/firestore';
 
 export default class Item extends React.Component {
 
   static navigationOptions = {
-    headerTitle: 'Joul Market',
+    headerTitle: 'For Sale',
   }
+
   constructor() {
     super()
     this.state = {
@@ -40,6 +42,20 @@ export default class Item extends React.Component {
         }
     )
   }
+	purchase() {
+  	// TODO: Add the buyer's userRef to a collection of buyers within the item document
+		this.alertAndBack()
+	}
+
+	alertAndBack() {
+		const backAction = NavigationActions.back({
+			key: null
+		})
+		Alert.alert(null, 'You have purchased this item!',
+			[
+				{text: 'OK', onPress: () => this.props.navigation.dispatch(backAction)}
+			])
+	}
 
   render() {
     const user = this.props.screenProps.user
@@ -62,10 +78,13 @@ export default class Item extends React.Component {
           </View>
           <Text style={styles.descriptionTextBox}>{description}</Text>
           <Text style={styles.emailTextBox}>{sellerData ?
-	          `Email ${sellerData.username} at ${sellerData.email} for more information` : null}</Text>
-          <TouchableOpacity onPress={() => {}}>
-            <Text>BUY</Text>
-          </TouchableOpacity>
+	          `Email ${sellerData.username} at ${sellerData.email} for more information about purchasing this item. When you are ready to exchange for jouls, click "Request to Purchase"`
+	          : null}</Text>
+	        <TouchableOpacity
+		        onPress={() => {this.purchase()} }
+		        style={styles.buttonContainer}>
+		        <Text style={styles.buttonText}>Request to Purchase</Text>
+	        </TouchableOpacity>
         </View>
     );
   }
@@ -114,6 +133,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     backgroundColor: '#336E7B',
     padding: 15,
+	  margin: 10
   },
   buttonText: {
     textAlign: 'center',
