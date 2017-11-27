@@ -18,6 +18,11 @@ export default class Item extends React.Component {
     this.firestore = firebase.firestore()
   }
 
+  componentWillMount() {
+	  const sellerRef =  this.props.navigation.state.params.sellerRef
+	  this.loadSeller(sellerRef)
+  }
+
   loadUser() {
     const userRef = this.props.screenProps.fireStoreRefs.user
     userRef.get().then( (doc) => {
@@ -44,23 +49,20 @@ export default class Item extends React.Component {
     const userData = this.state.userData
     const title =  this.props.navigation.state.params.itemTitle
     const price =  this.props.navigation.state.params.itemPrice
-    const sellerRef =  this.props.navigation.state.params.sellerRef
-    this.loadSeller(sellerRef)
     const sellerData = this.state.sellerData
-    console.log(sellerData.username)
     const description =  this.props.navigation.state.params.itemDescription
     return (
         <View style={styles.container}>
           <View style={styles.topTextBox}>
             <View style={styles.headText}>
               <Text style={styles.title}>{title}</Text>
-              <Text style={styles.price}>{price}</Text>
+              <Text style={styles.price}>{`${price} jouls`}</Text>
             </View>
-            {/*<Text>{this.state.sellerData.username}</Text>*/}
-            <Text>Username</Text>
+            <Text>{sellerData ? `sold by ${sellerData.username}` : null}</Text>
           </View>
           <Text style={styles.descriptionTextBox}>{description}</Text>
-          <Text style={styles.emailTextBox}>Email usersEmail for more information</Text>
+          <Text style={styles.emailTextBox}>{sellerData ?
+	          `Email ${sellerData.username} at ${sellerData.email} for more information` : null}</Text>
           <TouchableOpacity onPress={() => {}}>
             <Text>BUY</Text>
           </TouchableOpacity>
