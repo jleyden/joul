@@ -36,7 +36,7 @@ export default class Postings extends React.Component {
         (querySnapshot) => {
           const itemList = []
           querySnapshot.forEach( (doc) => {
-            itemList.push(doc.data())
+            itemList.push(doc)
           })
           this.setState({
             items: itemList
@@ -68,18 +68,19 @@ export default class Postings extends React.Component {
               <List style={styles.listContainer}>
                   { items ?
                       items.map((item, i) => (
-                      	  item.available ?
+                      	  item.data().available ?
                           <ListItem containerStyle={styles.box}
                                     titleStyle={styles.listTitle}
                                     key={i}
-                                    title={item.title}
-                                    subtitle={'$' + item.price}
+                                    title={item.data().title}
+                                    subtitle={item.data().price + " jouls"}
                                     onPress={
                                       () => this.props.navigation.navigate('Item', {
-                                        itemTitle: item.title,
-                                        itemPrice: item.price,
-                                        sellerRef: item.user,
-                                        itemDescription: item.description,
+                                        itemID: item.id,
+                                        itemTitle: item.data().title,
+                                        itemPrice: item.data().price,
+                                        sellerRef: item.data().user,
+                                        itemDescription: item.data().description,
                                       })}
                           /> : null
                       )) : null
