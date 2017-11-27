@@ -19,14 +19,43 @@ function isValid(userPoint, busPoint) {
 	return false
 }
 
-function updateEventValidation(eventRef, validTrip) {
+// Right now, we are awarding 0.1 jouls for every 10 seconds spent on a bus
+function calculateJouls(totalPoints) {
+	return totalPoints / 10.0
+}
+
+function addJoulsToWallet(userRef, jouls) {
+	userRef.get().then((userDoc) => {
+		const userData = userDoc.data()
+		const currentJouls = userData.wallet
+		const newJouls = currentJouls + jouls
+		userRef.update({
+			wallet: newJouls
+		}).then(console.log('successfully updated user wallet'))
+			.catch((error) => console.error('error updating wallet', error))
+	}).catch((error => console.error('error accessing user', error)))
+}
+
+function updateEventValidation(eventRef, validTrip, jouls) {
 	eventRef.update({
+		jouls,
 		validation: validTrip
 	}).then(
 		console.log('Verified trip with status', validTrip)
 	).catch((error) => {
 		console.error('Error updating event', error)
 	})
+}
+
+// Award jouls and signify a valid trip
+function updateUserData(eventRef, userRef, validTrip, pathLength) {
+	let awardedJouls = 0
+	// only award jouls and update wallet if approved
+	if (validTrip === 'approved') {
+		awardedJouls = calculateJouls(pathLength)
+		addJoulsToWallet(userRef, awardedJouls)
+	}
+	updateEventValidation(eventRef, validTrip, awardedJouls)
 }
 
 // Looks through the whole path and determine if it is valid
@@ -46,14 +75,18 @@ function readPath(pathRef) {
 					}
 				}
 			})
+
+			// Allow for a 75% approval rate
 			let validTrip = 'disapproved'
 			const validRatio = valid / total
-			// Allow for a 75% approval rate
 			if (validRatio >= 0.75) {
 				validTrip = 'approved'
 			}
+
+			// retrieve user data for updating
 			const eventRef = pathRef.parent
-			updateEventValidation(eventRef, validTrip)
+			const userRef = eventRef.parent.parent
+			updateUserData(eventRef, userRef, validTrip, total)
 			console.log('event has valid ratio:', validRatio)
 		}
 	).catch((error) => {
@@ -95,4 +128,38 @@ exports.validateTrip = functions.firestore
 			}).catch((error) => {
 			console.error("Error fetching transit data", error)
 		})
+	})
+
+
+// Validates a purchase made by the buyer
+exports.purchaseItem = functions.firestore
+	.document('market/{itemId}/buyers/{buyerId}')
+	.onCreate(buyer => {
+		const buyerRef = buyer.data.data().buyerRef
+		const itemRef = buyer.data.ref.parent.parent
+
+		// get the sellerReference and price
+		itemRef.get().then( (doc) => {
+			const itemData = doc.data()
+			const sellerRef = itemData.user
+			const price = itemData.price
+			buyerRef.get().then((doc) => {
+
+				// Check if the buyer has enough funds
+				const buyerWallet = doc.data().wallet
+				if (buyerWallet < price) {
+					console.log('buyer does not have sufficient funds')
+					return
+				}
+
+				// make the joul exchange
+				addJoulsToWallet(sellerRef, price)
+				addJoulsToWallet(buyerRef, -1*price)
+
+				// make the item unavailable on the market
+				itemRef.update({
+					available: false
+				}).catch((error) => console.error('error accessing buyer', error))
+			}).catch((error) => console.error('error accessing buyer', error))
+		}).catch((error) => console.error('error accessing item', error))
 	})
