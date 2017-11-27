@@ -1,17 +1,23 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
 import RegisterForm from './RegisterForm';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 export default class Login extends React.Component {
     render() {
         return (
-            <KeyboardAvoidingView behavior="padding" style={styles.container}>
+            <KeyboardAwareScrollView
+                style={{ backgroundColor: '#4c69a5' }}
+                resetScrollToCoords={{ x: 0, y: 0 }}
+                contentContainerStyle={styles.container}
+                scrollEnabled={true}>
                 <View style ={styles.logoContainer}>
                     <Text style={styles.bigText}>JOUL</Text>
                 </View>
                 <View style={styles.formContainer}>
                     <RegisterForm/>
                 </View>
-            </KeyboardAvoidingView>
+            </KeyboardAwareScrollView>
         );
     }
 }

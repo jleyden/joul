@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button,
 	TouchableOpacity, TextInput, KeyboardAvoidingView, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation'
 import { Container, Header, Content, Title, Body } from 'native-base'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import firebase from 'firebase'
 import 'firebase/firestore';
 
@@ -98,7 +99,11 @@ export default class Post extends React.Component {
 
     render() {
         return (
-            <KeyboardAvoidingView behavior="padding" style={styles.container}>
+            <KeyboardAwareScrollView
+                style={{ backgroundColor: '#4c69a5' }}
+                resetScrollToCoords={{ x: 0, y: 0 }}
+                contentContainerStyle={styles.container}
+                scrollEnabled={true}>
                 <View>
                     <TextInput
                         placeholder="Title"
@@ -139,7 +144,7 @@ export default class Post extends React.Component {
                         <Text style={styles.buttonText}>POST</Text>
                     </TouchableOpacity>
                 </View>
-            </KeyboardAvoidingView>
+            </KeyboardAwareScrollView>
         );
     }
 }
