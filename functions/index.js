@@ -159,7 +159,8 @@ exports.purchaseItem = functions.firestore
 				// make the item unavailable on the market
 				itemRef.update({
 					available: false
-				}).catch((error) => console.error('error accessing buyer', error))
+				}).then(console.log('updated item availability'))
+					.catch((error) => console.error('error updating item', error))
 			}).catch((error) => console.error('error accessing buyer', error))
 		}).catch((error) => console.error('error accessing item', error))
 	})
