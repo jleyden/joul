@@ -38,7 +38,7 @@ export default class Secured extends React.Component {
 			user: null,
 			fireStoreRefs: {
 				user: null,
-				events: null
+				events: null,
 			}
 		}
 		this.updateUser = this.updateUser.bind(this)

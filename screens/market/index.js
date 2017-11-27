@@ -3,12 +3,14 @@ import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import { StackNavigator } from 'react-navigation'
 import Post from './post'
 import Postings from './postings'
+import Item from './item'
 import icon from './market.png'
 
 
 const MarketNavigator = StackNavigator({
 	Postings: { screen: Postings },
 	Post: { screen: Post},
+	Item: { screen: Item},
 });
 
 
@@ -49,5 +51,9 @@ const styles = StyleSheet.create({
   bigText: {
 	color: '#009688',
 	fontSize: 30
-  }
+  },
+	buttonContainer: {
+		backgroundColor: '#336E7B',
+		paddingVertical: 15
+	},
 	});

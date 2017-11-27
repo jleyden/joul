@@ -19,7 +19,6 @@ export default class Post extends React.Component {
       description: '',
       price: '',
       user: '',
-      // docref: '',
     };
     this.firestore = firebase.firestore()
   }
