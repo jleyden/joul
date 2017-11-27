@@ -68,6 +68,7 @@ export default class Postings extends React.Component {
               <List style={styles.listContainer}>
                   { items ?
                       items.map((item, i) => (
+                      	  item.available ?
                           <ListItem containerStyle={styles.box}
                                     titleStyle={styles.listTitle}
                                     key={i}
@@ -80,7 +81,7 @@ export default class Postings extends React.Component {
                                         sellerRef: item.user,
                                         itemDescription: item.description,
                                       })}
-                          />
+                          /> : null
                       )) : null
                   }
               </List>
