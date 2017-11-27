@@ -130,6 +130,35 @@ exports.validateTrip = functions.firestore
 		})
 	})
 
+function createExchangeEvents(buyerRef, sellerRef, price) {
+	const buyerEventsRef = buyerRef.collection('events')
+	const sellerEventsRef = sellerRef.collection('events')
+	const time = new Date()
+
+	//Update buyer's events
+	sellerRef.get().then( (doc) => {
+		const sellerUser = doc.data().username
+		buyerEventsRef.add({
+			type: `purchase from ${sellerUser}`,
+			time,
+			validation: 'approved',
+			jouls: -1*price,
+			sellerRef: sellerRef
+		}).then(console.log('updated user purchase')).catch((error) => console.error('error updating event', error))
+	}).catch((error) => console.error('error accessing seller', error))
+
+	//Update seller's events
+	buyerRef.get().then( (doc) => {
+		const buyerUser = doc.data().username
+		sellerEventsRef.add({
+			type: `sale to ${buyerUser}`,
+			time,
+			validation: 'approved',
+			jouls: price,
+			buyerRef: buyerRef
+		}).then(console.log('updated seller sale')).catch((error) => console.error('error updating event', error))
+	}).catch((error) => console.error('error accessing buyer', error))
+}
 
 // Validates a purchase made by the buyer
 exports.purchaseItem = functions.firestore
@@ -159,7 +188,10 @@ exports.purchaseItem = functions.firestore
 				// make the item unavailable on the market
 				itemRef.update({
 					available: false
-				}).catch((error) => console.error('error accessing buyer', error))
+				}).then(
+					createExchangeEvents(buyerRef, sellerRef, price)
+				)
+					.catch((error) => console.error('error updating item', error))
 			}).catch((error) => console.error('error accessing buyer', error))
 		}).catch((error) => console.error('error accessing item', error))
 	})

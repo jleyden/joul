@@ -21,6 +21,7 @@ export default class Post extends React.Component {
       user: '',
     };
     this.firestore = firebase.firestore()
+	  this.posting = false
   }
 
   componentDidMount() {
@@ -65,6 +66,10 @@ export default class Post extends React.Component {
   }
 
   refPostToUser(timestamp, docref) {
+		if (this.posting) {
+			return
+		}
+		this.posting = true
 		const backAction = NavigationActions.back({
 			key: null
 		})
