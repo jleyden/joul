@@ -24,7 +24,7 @@ function calculateJouls(totalPoints) {
 	return totalPoints / 10.0
 }
 
-function updateUserWallet(userRef, jouls) {
+function addJoulsToWallet(userRef, jouls) {
 	userRef.get().then((userDoc) => {
 		const userData = userDoc.data()
 		const currentJouls = userData.wallet
@@ -53,7 +53,7 @@ function updateUserData(eventRef, userRef, validTrip, pathLength) {
 	// only award jouls and update wallet if approved
 	if (validTrip === 'approved') {
 		awardedJouls = calculateJouls(pathLength)
-		updateUserWallet(userRef, awardedJouls)
+		addJoulsToWallet(userRef, awardedJouls)
 	}
 	updateEventValidation(eventRef, validTrip, awardedJouls)
 }
@@ -128,4 +128,38 @@ exports.validateTrip = functions.firestore
 			}).catch((error) => {
 			console.error("Error fetching transit data", error)
 		})
+	})
+
+
+// Validates a purchase made by the buyer
+exports.purchaseItem = functions.firestore
+	.document('market/{itemId}/buyers/{buyerId}')
+	.onCreate(buyer => {
+		const buyerRef = buyer.data.data().buyerRef
+		const itemRef = buyer.data.ref.parent.parent
+
+		// get the sellerReference and price
+		itemRef.get().then( (doc) => {
+			const itemData = doc.data()
+			const sellerRef = itemData.user
+			const price = itemData.price
+			buyerRef.get().then((doc) => {
+
+				// Check if the buyer has enough funds
+				const buyerWallet = doc.data().wallet
+				if (buyerWallet < price) {
+					console.log('buyer does not have sufficient funds')
+					return
+				}
+
+				// make the joul exchange
+				addJoulsToWallet(sellerRef, price)
+				addJoulsToWallet(buyerRef, -1*price)
+
+				// make the item unavailable on the market
+				itemRef.update({
+					available: false
+				}).catch((error) => console.error('error accessing buyer', error))
+			}).catch((error) => console.error('error accessing buyer', error))
+		}).catch((error) => console.error('error accessing item', error))
 	})

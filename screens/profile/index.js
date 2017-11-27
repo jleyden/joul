@@ -29,9 +29,11 @@ export default class Profile extends React.Component {
 		this.state = {
 			user: null,
 			events: null,
-			userData: null
+			userData: null,
 		}
 		this.firestore = firebase.firestore()
+		this.readingUser = false
+		this.readingEvents = false
 		this.badgeColors = {
 			approved: '#009688',
 			pending: '#FFEB3B',
@@ -41,7 +43,7 @@ export default class Profile extends React.Component {
 
 	loadUser() {
 		const userRef = this.props.screenProps.fireStoreRefs.user
-		userRef.get().then( (doc) => {
+		userRef.onSnapshot( (doc) => {
 			this.setState({
 				userData: doc.data()
 			})
@@ -67,11 +69,13 @@ export default class Profile extends React.Component {
 
   render() {
   	const user = this.props.screenProps.user
-	  if (user && !this.state.userData) {
+	  if (user && !this.readingUser) {
   		this.loadUser()
+		  this.readingUser = true
 	  }
-	  if (!this.state.events && user) {
+	  if (user && !this.readingEvents) {
 		  this.updateEvents()
+		  this.readingEvents = true
 	  }
 	  const userData = this.state.userData
 	  const events = this.state.events
