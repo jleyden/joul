@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, StatusBar, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { login } from '../../../redux/actions/auth';
 import { register } from '../../../redux/actions/auth';
@@ -44,13 +44,15 @@ class Login extends React.Component {
         }
         //Check that password field is complete
         if (!this.state.password) {
-            errorMessage = errorMessage.concat("Password field is empty. ");
-        } else {
+	        errorMessage = errorMessage.concat("Password field is empty. ");
+        } else if (this.state.password.length < 6){
+		    errorMessage = errorMessage.concat("Password must be at least 6 characters ")
+	      } else {
             passwordValid = true;
         }
         //Check that confirm password field is complete and confirm password matches password
         if (!this.state.confirmPassword) {
-            errorMessage = errorMessage.concat("Confirm password field is empty. ");
+	        errorMessage = errorMessage.concat("Confirm password field is empty. ");
         }
         if (this.state.password != this.state.confirmPassword) {
             errorMessage = errorMessage.concat(" The passwords do not match.")
