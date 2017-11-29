@@ -103,11 +103,16 @@ class Login extends React.Component {
 				      this.props.onLogin(email, pass);
 			      }
 	        ).catch((error) => {
+			      if (error.hasOwnProperty('message')) {
+				      Alert.alert('registration failed', error.message)
+			      }
 			        console.log('user addition failed.')
 		        }
 	        )
 	      }).catch((error) => {
-	    	  console.log(error)
+	    	  if (error.hasOwnProperty('message')) {
+	    	  	Alert.alert('registration failed', error.message)
+		      }
           this.setState({ error: 'Authentication failed.', loaded: true });
 	        });
 	  }

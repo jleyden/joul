@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, StatusBar, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { login } from '../../../redux/actions/auth';
 import { register } from '../../../redux/actions/auth';
@@ -37,8 +37,10 @@ class Login extends React.Component {
             .then(() => {
                 this.setState({ error: '', loading: false});
                 this.loginUser();})
-            .catch(() => {
-                alert("login failed");
+            .catch((error) => {
+	            if (error.hasOwnProperty('message')) {
+		            Alert.alert('login failed', error.message)
+	            }
             });
     }
     render() {
