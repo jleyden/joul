@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, StatusBar, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { login } from '../../../redux/actions/auth';
 import { register } from '../../../redux/actions/auth';
@@ -14,17 +14,16 @@ class Login extends React.Component {
             route: 'Login',
             email: '',
             password: '',
-            loginSuccessful: false
         };
     }
     userLogin (e) {
         e.preventDefault();
         this.signin();
-        if (this.state.loginSuccessful) {
-            this.setState({ loginSuccessful: false });
-            this.props.onLogin(this.state.email, this.state.password);
-        }
     }
+    loginUser() {
+      this.props.onLogin(this.state.email, this.state.password);
+    }
+
     newUser (e) {
         this.props.onRegister();
         e.preventDefault();
@@ -35,9 +34,13 @@ class Login extends React.Component {
         });
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password)
-            .then(() => { this.setState({ error: '', loading: false, loginSuccessful: true }); })
-            .catch(() => {
-                alert("login failed");
+            .then(() => {
+                this.setState({ error: '', loading: false});
+                this.loginUser();})
+            .catch((error) => {
+	            if (error.hasOwnProperty('message')) {
+		            Alert.alert('login failed', error.message)
+	            }
             });
     }
     render() {
