@@ -14,17 +14,16 @@ class Login extends React.Component {
             route: 'Login',
             email: '',
             password: '',
-            loginSuccessful: false
         };
     }
     userLogin (e) {
         e.preventDefault();
         this.signin();
-        if (this.state.loginSuccessful) {
-            this.setState({ loginSuccessful: false });
-            this.props.onLogin(this.state.email, this.state.password);
-        }
     }
+    loginUser() {
+      this.props.onLogin(this.state.email, this.state.password);
+    }
+
     newUser (e) {
         this.props.onRegister();
         e.preventDefault();
@@ -35,7 +34,9 @@ class Login extends React.Component {
         });
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email, password)
-            .then(() => { this.setState({ error: '', loading: false, loginSuccessful: true }); })
+            .then(() => {
+                this.setState({ error: '', loading: false});
+                this.loginUser();})
             .catch(() => {
                 alert("login failed");
             });

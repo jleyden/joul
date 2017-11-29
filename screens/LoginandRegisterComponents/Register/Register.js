@@ -30,11 +30,13 @@ const styles = StyleSheet.create({
         padding: 20
     },
     logoContainer: {
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
         height: 160,
     },
     formContainer: {
+        flex: 2,
         height: 160,
     },
     bigText: {

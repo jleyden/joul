@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, StatusBar, Alert }
 import { connect } from 'react-redux';
 import { login } from '../../../redux/actions/auth';
 import { register } from '../../../redux/actions/auth';
+import { logout } from '../../../redux/actions/auth';
 import firebase from 'firebase';
 import 'firebase/firestore';
 
@@ -110,74 +111,80 @@ class Login extends React.Component {
           this.setState({ error: 'Authentication failed.', loaded: true });
 	        });
 	  }
+    backToLogin (e) {
+      this.props.onLogout();
+      e.preventDefault();
+    }
 
 
     render() {
         return (
             <View style={styles.container}>
-                <StatusBar
-                    barStyle="light-content"
-                />
-                <TextInput
-                    placeholder="email address"
-                    placeholderTextColor="rgba(255,255,255,0.8)"
-                    returnKeyType="next"
-                    style={styles.input}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    value={this.state.email}
-                    onChangeText={(text) => this.setState({ email: text })}
-                    onSubmitEditing={() => this.usernameInput.focus()}
+              <StatusBar
+                  barStyle="light-content"
+              />
+              <TextInput
+                  placeholder="email address"
+                  placeholderTextColor="rgba(255,255,255,0.8)"
+                  returnKeyType="next"
+                  style={styles.input}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  value={this.state.email}
+                  onChangeText={(text) => this.setState({ email: text })}
+                  onSubmitEditing={() => this.usernameInput.focus()}
 
-                />
-                <TextInput
-                    placeholder="username"
-                    placeholderTextColor="rgba(255,255,255,0.8)"
-                    returnKeyType="next"
-                    style={styles.input}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    value={this.state.username}
-                    onChangeText={(text) => this.setState({ username: text })}
-                    ref={(input) => this.usernameInput = input}
-                    onSubmitEditing={() => this.passwordInput.focus()}
-                />
-                <TextInput
-                    placeholder="password"
-                    placeholderTextColor="rgba(255,255,255,0.8)"
-                    returnKeyType="next"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    style={styles.input}
-                    secureTextEntry={ true }
-                    value={this.state.password}
-                    onChangeText={(text) => this.setState({ password: text })}
-                    ref={(input) => this.passwordInput = input}
-                    onSubmitEditing={() => this.confirmPasswordInput.focus()}
-                />
-                <TextInput
-                    placeholder="confirm password"
-                    placeholderTextColor="rgba(255,255,255,0.8)"
-                    returnKeyType="go"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    style={styles.input}
-                    secureTextEntry={ true }
-                    value={this.state.confirmPassword}
-                    onChangeText={(text) => this.setState({ confirmPassword: text })}
-                    ref={(input) => this.confirmPasswordInput = input}
-                />
-
-                <TouchableOpacity onPress={(e) => this.checkFormsAndRegister(e)} style={styles.buttonContainer}>
-                    <Text style={styles.buttonText}>REGISTER</Text>
-                </TouchableOpacity>
+              />
+              <TextInput
+                  placeholder="username"
+                  placeholderTextColor="rgba(255,255,255,0.8)"
+                  returnKeyType="next"
+                  style={styles.input}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  value={this.state.username}
+                  onChangeText={(text) => this.setState({ username: text })}
+                  ref={(input) => this.usernameInput = input}
+                  onSubmitEditing={() => this.passwordInput.focus()}
+              />
+              <TextInput
+                  placeholder="password"
+                  placeholderTextColor="rgba(255,255,255,0.8)"
+                  returnKeyType="next"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={styles.input}
+                  secureTextEntry={ true }
+                  value={this.state.password}
+                  onChangeText={(text) => this.setState({ password: text })}
+                  ref={(input) => this.passwordInput = input}
+                  onSubmitEditing={() => this.confirmPasswordInput.focus()}
+              />
+              <TextInput
+                  placeholder="confirm password"
+                  placeholderTextColor="rgba(255,255,255,0.8)"
+                  returnKeyType="go"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={styles.input}
+                  secureTextEntry={ true }
+                  value={this.state.confirmPassword}
+                  onChangeText={(text) => this.setState({ confirmPassword: text })}
+                  ref={(input) => this.confirmPasswordInput = input}
+                  onSubmitEditing={(e) => this.checkFormsAndRegister(e)}
+              />
+              <TouchableOpacity onPress={(e) => this.checkFormsAndRegister(e)} style={styles.buttonContainer}>
+                  <Text style={styles.buttonText}>REGISTER</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={(e) => this.backToLogin(e)} style={styles.backButton}>
+                <Text style={styles.buttonText}>Return to Login</Text>
+              </TouchableOpacity>
             </View>
         );
     }
 }
-
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -190,43 +197,48 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onLogin: (email, password) => { dispatch(login(email, password)); },
         onRegister: () => { dispatch(register()); },
-        onSignUp: (email, password) => { dispatch(signup(email, password)); }
+        onSignUp: (email, password) => { dispatch(signup(email, password)); },
+        onLogout: () => { dispatch(logout()); },
     }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20
-    },
-    formText: {
-        color: 'white',
-        fontWeight: '500',
-        padding: 10,
-        opacity: 1
-    },
-    bigText: {
-        color: 'white',
-        fontSize: 60,
-        opacity: 1
-    },
-    buttonContainer: {
-        backgroundColor: '#336E7B',
-        paddingVertical: 15
-    },
-    buttonText: {
-        textAlign: 'center',
-        color: '#FFFFFF',
-        fontWeight: '700'
-    },
-    input: {
-        height: 40,
-        backgroundColor: 'rgba(255, 255, 255, 0.4)',
-        marginBottom: 20,
-        color: '#FFFFFF',
-        paddingHorizontal: 10,
+  container: {
+      flex: 1,
+      padding: 20
+  },
+  formText: {
+      color: 'white',
+      fontWeight: '500',
+      padding: 10,
+      opacity: 1
+  },
+  bigText: {
+      color: 'white',
+      fontSize: 60,
+      opacity: 1
+  },
+  buttonContainer: {
+      backgroundColor: '#336E7B',
+      paddingVertical: 15
+  },
+  backButton: {
+    paddingVertical: 15,
+    marginBottom: 10,
 
-    }
+  },
+  buttonText: {
+      textAlign: 'center',
+      color: '#FFFFFF',
+      fontWeight: '700'
+  },
+  input: {
+      height: 40,
+      backgroundColor: 'rgba(255, 255, 255, 0.4)',
+      marginBottom: 20,
+      color: '#FFFFFF',
+      paddingHorizontal: 10,
+  }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
