@@ -4,6 +4,11 @@ const firebase = require('firebase')
 require('firebase/firestore')
 const axios = require('axios')
 
+let closest = {
+	distance: 100000,
+	bus: null
+}
+
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
@@ -15,6 +20,11 @@ function isValid(userPoint, busPoint) {
 	const distance = Math.sqrt(Math.pow(latDistance, 2) + Math.pow(lonDistance, 2))
 	if (distance <= 0.001) {
 		return true
+	}
+	// for testing purposes, display the closest bus
+	if (distance < closest.distance) {
+		closest.distance = distance
+		closest.bus = busPoint
 	}
 	return false
 }
@@ -100,6 +110,9 @@ exports.validateTrip = functions.firestore
 	.onCreate(point => {
 		const userPoint = point.data.data();
 
+		// for testing purposes, we want to display the user's closest bus
+		const userRef = point.data.ref.parent.parent.parent.parent
+
 		// If the trip has ended, review all the points for submission
 		if (userPoint.end) {
 			const pathRef = point.data.ref.parent
@@ -112,10 +125,20 @@ exports.validateTrip = functions.firestore
 		axios.get('http://restbus.info/api/agencies/actransit/vehicles')
 			.then((response) => {
 				response.data.forEach((busPoint) => {
-					if (isValid(userPoint, busPoint)) {
+					if (isValid(userPoint, busPoint, userRef)) {
 						validStatus = true
 					}
 				})
+
+				//update the user's closest bus for testing
+				userRef.update({
+					closestBus: closest
+				}).then(() => {
+					console.log('updated closest bus', closest)
+					closest.distance = 100000;
+					closest.bus = null}).catch((error) => 'error updating closest')
+
+
 				const pointRef = point.data.ref
 					pointRef.update({
 						valid: validStatus

@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Image} from 'react-native';
-import { Container, Header, Content, Text, Icon,
+import { StyleSheet, View, ScrollView, Image, Text} from 'react-native';
+import { Container, Header, Content, Icon,
    Left, Body, Right, Switch, Title,
    Thumbnail } from 'native-base';
 import firebase from 'firebase'
@@ -101,6 +101,16 @@ export default class Profile extends React.Component {
           </Right>
         </Header>
 	      <ScrollView>
+		      <View>
+			      { userData ?
+			      <Text style={styles.money}>{userData.closestBus ? userData.closestBus.distance : null}</Text>
+			       : null
+				      }
+			      { userData ?
+				      <Text style={styles.money}>{userData.closestBus ? userData.closestBus.bus.routeId : null}</Text>
+				      : null
+			      }
+		      </View>
 		      <List containerStyle={styles.list}>
 			      { events ?
 				      events.map((event, i) => (
