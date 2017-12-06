@@ -4,6 +4,8 @@ import { StackNavigator } from 'react-navigation'
 import Post from './post'
 import Postings from './postings'
 import Item from './item'
+import Search from './exchange/search'
+import Exchange from './exchange/exchange'
 import icon from './market.png'
 
 
@@ -11,6 +13,8 @@ const MarketNavigator = StackNavigator({
 	Postings: { screen: Postings },
 	Post: { screen: Post},
 	Item: { screen: Item},
+	Search: { screen: Search },
+	Exchange: {screen: Exchange}
 });
 
 
