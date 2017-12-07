@@ -195,3 +195,31 @@ exports.purchaseItem = functions.firestore
 			}).catch((error) => console.error('error accessing buyer', error))
 		}).catch((error) => console.error('error accessing item', error))
 	})
+
+// Validates a direct exchange of jouls
+exports.exchangeJouls = functions.firestore
+	.document('users/{userId}/payments/{paymentId}')
+	.onCreate(payment => {
+		const paymentData = payment.data.data()
+		const payerRef = paymentData.payerRef
+
+		// get the receiverReference and amount
+		const receiverRef = paymentData.receiverRef
+		const amount = paymentData.amount
+		payerRef.get().then((doc) => {
+
+			// Check if the buyer has enough funds
+			const buyerWallet = doc.data().wallet
+			if (buyerWallet < amount) {
+				console.log('buyer does not have sufficient funds')
+				return
+			}
+
+			// make the joul exchange
+			addJoulsToWallet(receiverRef, amount)
+			addJoulsToWallet(payerRef, -1*amount)
+
+			// make the item unavailable on the market
+			createExchangeEvents(payerRef, receiverRef, amount)
+		}).catch((error) => console.error('error accessing buyer', error))
+	})

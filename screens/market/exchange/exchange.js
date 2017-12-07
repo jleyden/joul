@@ -16,8 +16,10 @@ export default class Exchange extends React.Component {
     this.firestore = firebase.firestore()
     this.state = {
       jouls: '',
-      didType: 0
+      didType: 0,
     }
+    this.user = this.props.screenProps.user
+	  this.userRef = this.props.screenProps.fireStoreRefs.user
   }
 
   renderIf(condition, content) {
@@ -41,17 +43,36 @@ export default class Exchange extends React.Component {
   }
 
   exchange() {
-    const backAction = NavigationActions.back({
-      key: null
-    })
-    Alert.alert(
-        'Success',
-        'Sent ' + this.props.navigation.state.params.recDocData.username + ' '
-        + this.state.jouls + ' jouls',
-        [
-          {text: 'OK', onPress: () => this.props.navigation.dispatch(backAction)}
-        ]
-    )
+  	const amount = Number(this.state.jouls)
+	  const backAction = NavigationActions.back({
+		  key: null
+	  })
+	  this.userRef.get().then( (doc) => {
+		  const userData = doc.data()
+		  if (userData.wallet < amount) {
+			  Alert.alert(
+				  'Failure',
+				  'insufficient jouls',
+				  [
+					  {text: 'OK', onPress: () => this.props.navigation.dispatch(backAction)}
+				  ])
+		  } else {
+			  this.firestore.collection(`users/${this.user.uid}/payments`).add({
+				  receiverRef: this.props.navigation.state.params.recDoc.ref,
+				  payerRef: this.userRef,
+				  amount
+			  }).then(
+				  Alert.alert(
+					  'Success',
+					  'Sent ' + this.props.navigation.state.params.recDocData.username + ' '
+					  + this.state.jouls + ' jouls',
+					  [
+						  {text: 'OK', onPress: () => this.props.navigation.dispatch(backAction)}
+					  ]
+				  )
+			  ).catch( (err) => console.error(err))
+		  }}).catch( (err) => console.error(err) )
+
   }
 
   render() {
