@@ -5,6 +5,8 @@ import Login from './LoginandRegisterComponents/Login/Login';
 import Register from './LoginandRegisterComponents/Register/Register';
 import firebase from 'firebase';
 
+import Tutorial from './tutorial'
+
 
 
 class Application extends React.Component {
@@ -20,6 +22,7 @@ class Application extends React.Component {
     }
 
     render() {
+    	return <Tutorial/>
         if (this.props.isLoggedIn) {
           return <Secured />;
         } else if (this.props.register) {
