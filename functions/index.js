@@ -18,7 +18,7 @@ function isValid(userPoint, busPoint) {
 	const latDistance = Math.abs(userPoint.latitude - busPoint.lat)
 	const lonDistance = Math.abs(userPoint.longitude - busPoint.lon)
 	const distance = Math.sqrt(Math.pow(latDistance, 2) + Math.pow(lonDistance, 2))
-	if (distance <= 0.001) {
+	if (distance <= 0.00220) {
 		return true
 	}
 	// for testing purposes, display the closest bus
@@ -89,7 +89,7 @@ function readPath(pathRef) {
 			// Allow for a 75% approval rate
 			let validTrip = 'disapproved'
 			const validRatio = valid / total
-			if (validRatio >= 0.75) {
+			if (validRatio >= 0.65) {
 				validTrip = 'approved'
 			}
 
