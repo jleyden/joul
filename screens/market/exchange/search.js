@@ -17,7 +17,8 @@ export default class Search extends React.Component {
     super(props);
     this.firestore = firebase.firestore()
     this.state = {
-      //username: "",
+      searchUsername: "",
+      buttonUsername: "",
       containsUsername: 0
     }
     this.recDoc = null
@@ -32,11 +33,11 @@ export default class Search extends React.Component {
   }
 
   containsUsername() {
-    if (!this.state.username) {
+    if (!this.state.searchUsername) {
       return
     }
     const docRef = this.firestore.collection("users")
-    var searched = docRef.where("username", "==", this.state.username).onSnapshot(
+    var searched = docRef.where("username", "==", this.state.searchUsername).onSnapshot(
         (querySnapshot) => {
           if (querySnapshot.empty) {
             this.setState({
@@ -45,7 +46,8 @@ export default class Search extends React.Component {
           } else {
             this.setState({
               containsUsername: 1,
-              recDoc: querySnapshot.docs[0]
+              recDoc: querySnapshot.docs[0],
+              buttonUsername: this.state.searchUsername
             })
           }
           // querySnapshot.forEach( (doc) => {
@@ -60,6 +62,12 @@ export default class Search extends React.Component {
 
   goToExchange() {
     const recDoc = this.state.recDoc
+    this.setState({
+      searchUsername: "",
+      buttonUsername: "",
+      containsUsername: 0,
+      recDoc: null
+    })
     const recDocData = recDoc.data()
     this.props.navigation.navigate('Exchange', {
       recDoc: recDoc,
@@ -74,13 +82,13 @@ export default class Search extends React.Component {
         <TextInput
             placeholder="Username"
             placeholderTextColor="grey"
-            returnKeyType="next"
+            returnKeyType="search"
             style={styles.input}
             autoCapitalize="none"
             autoCorrect={false}
-            value={this.state.username}
-            onChangeText={(text) => this.setState({ username: text })}
-            //onSubmitEditing={() => this.priceInput.focus()}
+            value={this.state.searchUsername}
+            onChangeText={(text) => this.setState({ searchUsername: text })}
+            onSubmitEditing={() => this.containsUsername()}
         />
         <TouchableOpacity onPress={() => this.containsUsername()} style={styles.buttonContainer}>
           <Text style={styles.buttonText}>SEARCH</Text>
@@ -94,7 +102,7 @@ export default class Search extends React.Component {
               <View>
                 {recDoc ?
                   <TouchableOpacity onPress={() => this.goToExchange()} style={styles.userButton}>
-                    <Text style={styles.userButtonText}>Send Jouls to {this.state.username}</Text>
+                    <Text style={styles.userButtonText}>Send Jouls to {this.state.buttonUsername}</Text>
                   </TouchableOpacity>
                 : null}
               </View>
