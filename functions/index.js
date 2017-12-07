@@ -6,7 +6,7 @@ const axios = require('axios')
 
 let closest = {
 	distance: 100000,
-	bus: null
+	bus: {routeId: 'none'}
 }
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
@@ -78,9 +78,7 @@ function readPath(pathRef) {
 				const pointData = point.data()
 				if (!pointData.end) {
 					total += 1.0
-					console.log(point)
-					console.log(point.data().valid)
-					if (point.data().valid === true) {
+					if (pointData.valid === true) {
 						valid += 1.0
 					}
 				}
@@ -136,7 +134,7 @@ exports.validateTrip = functions.firestore
 				}).then(() => {
 					console.log('updated closest bus', closest)
 					closest.distance = 100000;
-					closest.bus = null}).catch((error) => 'error updating closest')
+					closest.bus = {routeId: 'none'} }).catch((error) => 'error updating closest')
 
 
 				const pointRef = point.data.ref
