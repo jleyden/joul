@@ -8,6 +8,7 @@ import Community from './community/index'
 import Market from './market/index'
 import Profile from './profile/index'
 
+
 const App = TabNavigator({
     Community: {
         screen: Community,

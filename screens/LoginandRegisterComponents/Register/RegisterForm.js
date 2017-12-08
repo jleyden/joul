@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, StatusBar, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { login } from '../../../redux/actions/auth';
+import { signup } from '../../../redux/actions/auth';
 import { register } from '../../../redux/actions/auth';
 import { logout } from '../../../redux/actions/auth';
 import firebase from 'firebase';
@@ -100,7 +101,7 @@ class Login extends React.Component {
 					      confirmPassword: '',
 					      loaded: true,
 				      });
-				      this.props.onLogin(email, pass);
+				      this.props.onSignUp(email, pass);
 			      }
 	        ).catch((error) => {
 			      if (error.hasOwnProperty('message')) {
