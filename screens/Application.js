@@ -5,6 +5,8 @@ import Login from './LoginandRegisterComponents/Login/Login';
 import Register from './LoginandRegisterComponents/Register/Register';
 import firebase from 'firebase';
 
+import Tutorial from './tutorial'
+
 
 
 class Application extends React.Component {
@@ -21,7 +23,11 @@ class Application extends React.Component {
 
     render() {
         if (this.props.isLoggedIn) {
-          return <Secured />;
+          if (this.props.tutorial) {
+            return <Tutorial/>;
+          } else {
+            return <Secured />;
+          }
         } else if (this.props.register) {
           return <Register/>
         } else {
@@ -33,7 +39,8 @@ class Application extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         isLoggedIn: state.auth.isLoggedIn,
-        register: state.auth.register
+        register: state.auth.register,
+        tutorial: state.auth.tutorial
     };
 }
 

@@ -16,9 +16,18 @@ export const register = () => {
     return {
         type: 'REGISTER'
     };
-}
+};
 
-export const signup = (username, email, password) => {
-    return (dispatch) => {
+export const signup = (username, password) => {
+    return {
+        type: 'SIGNUP',
+        username: username,
+        password: password
     };
+};
+
+export const finish_tutorial = () => {
+    return {
+        type: 'FINISH_TUTORIAL',
+  };
 };
