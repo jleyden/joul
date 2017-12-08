@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
+import { connect } from 'react-redux';
+import { finish_tutorial } from '../../redux/actions/auth';
 import icon1 from './icon1.png'
 import icon2 from './icon2.png'
 import icon3 from './icon3.png'
@@ -39,9 +41,9 @@ const slides = [
 	}
 ];
 
-export default class Tutorial extends React.Component {
+class Tutorial extends React.Component {
 	_onDone = () => {
-		// User finished the introduction. Show "real" app
+		this.props.onFinishTutorial()
 	}
 
 	render() {
@@ -53,3 +55,18 @@ export default class Tutorial extends React.Component {
 		);
 	}
 }
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    isLoggedIn: state.auth.isLoggedIn,
+    register: state.auth.register
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onFinishTutorial: () => { dispatch(finish_tutorial()); }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tutorial);
