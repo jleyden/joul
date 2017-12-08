@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import Post from './post'
 import firebase from 'firebase'
 import 'firebase/firestore';
 import { List, ListItem } from 'react-native-elements'
+import icon from './search-icon.png'
 
 export default class Postings extends React.Component {
 
@@ -57,12 +58,20 @@ export default class Postings extends React.Component {
     const items = this.state.items
 		return (
 			<View style={styles.container}>
-				<View>
+				<View style={styles.topButtons}>
 					<TouchableOpacity
 							onPress={() => this.props.navigation.navigate('Post', {})}
-							style={styles.buttonContainer}>
+							style={styles.sellButton}>
 						<Text style={styles.buttonText}>Sell Something</Text>
 					</TouchableOpacity>
+          <TouchableOpacity
+              onPress={() => this.props.navigation.navigate('Search', {})}
+              style={styles.searchButtonContainer}>
+            <Image
+                style={styles.searchButton}
+                source={icon}//require('./search-icon.png')}
+            />
+          </TouchableOpacity>
 				</View>
           <ScrollView  style={styles.scrollContainer}>
               <List style={styles.listContainer}>
@@ -117,9 +126,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
   },
-	buttonContainer: {
+  topButtons: {
+	  flexDirection: 'row'
+  },
+  searchButtonContainer: {
+    marginLeft: 2,
+    padding: 5,
+    backgroundColor: '#336E7B',
+
+  },
+  searchButton: {
+    alignItems: 'flex-end',
+    backgroundColor: '#336E7B',
+    padding: 5,
+    width: 50,
+    height: 50,
+  },
+	sellButton: {
 		backgroundColor: '#336E7B',
 		padding: 15,
+    width: Dimensions.get('window').width - 60
 	},
 	buttonText: {
     textAlign: 'center',
