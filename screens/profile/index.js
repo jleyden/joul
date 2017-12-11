@@ -118,9 +118,9 @@ class Profile extends React.Component {
             <Title style={styles.displayName}>{user ? user.displayName : null}</Title>
           </Body>
           <Right>
-						<TouchableOpacity onPress={() => this.confirmLogout()}>
-							<Text style={styles.logout}>Logout</Text>
-						</TouchableOpacity>
+						{/*<TouchableOpacity onPress={() => this.confirmLogout()}>*/}
+							{/*<Text style={styles.logout}>Logout</Text>*/}
+						{/*</TouchableOpacity>*/}
           </Right>
         </Header>
 	      <ScrollView>

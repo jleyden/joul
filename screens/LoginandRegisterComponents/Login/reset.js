@@ -27,7 +27,6 @@ export default class Reset extends React.Component {
   componentDidMount() {
   }
 
-
   checkFields() {
     var errorMessage = ""
     if (!this.state.email) {
@@ -38,8 +37,27 @@ export default class Reset extends React.Component {
     if (errorMessage) {
       Alert.alert(errorMessage)
     } else {
-      this.sendEmail()
+      this.containsEmail()
     }
+  }
+
+  containsEmail() {
+    const docRef = this.firestore.collection("users")
+    var searched = docRef.where("email", "==", this.state.email).onSnapshot(
+        (querySnapshot) => {
+          if (querySnapshot.empty) {
+            Alert.alert(
+                'There is no user with this email address.',
+                '',
+                [
+                  {text: 'OK', onPress: () => {}}
+                ]
+            )
+          } else {
+           this.sendEmail()
+          }
+        }
+    )
   }
 
   sendEmail() {
@@ -57,7 +75,7 @@ export default class Reset extends React.Component {
           ]
       )
     }).catch(function(error) {
-      Alert.alert(error)
+
     });
   }
 
