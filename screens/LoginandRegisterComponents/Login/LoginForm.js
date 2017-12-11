@@ -12,8 +12,8 @@ class Login extends React.Component {
         this.state = {
             loading: false,
             route: 'Login',
-            email: '',
-            password: '',
+            email: 't@t.com',
+            password: 'qwerty',
         };
     }
     userLogin (e) {

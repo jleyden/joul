@@ -244,3 +244,58 @@ exports.exchangeJouls = functions.firestore
 			createExchangeEvents(payerRef, receiverRef, amount)
 		}).catch((error) => console.error('error accessing buyer', error))
 	})
+
+exports.updateCommunity = functions.firestore
+	.document('users/{userId}/events/{eventId}')
+	.onWrite(event => {
+		const eventData = event.data.data()
+		let update = {
+			time: new Date()
+		}
+
+		// get data from the new event, if it is approved
+		if (eventData.validation === 'pending' || eventData.validation === 'disapproved') {
+			return
+		} else if (eventData.type === 'transit') {
+			update.event = 'transit event'
+			update.newJouls = eventData.jouls
+			update.newTrip = 1
+		} else {
+			update.event = eventData.type
+			update.newExchange = 1
+		}
+
+		// get the username
+		const userRef = event.data.ref.parent.parent
+		userRef.get().then( (doc) => {
+			update.username =  doc.data().username
+
+			// get the community data for updating
+			const rootRef = event.data.ref.parent.parent.parent.parent
+			const communityCollection = rootRef.collection('community')
+			const communityRoot = communityCollection.doc('root')
+			communityRoot.get().then( (doc) => {
+				const communityData = doc.data()
+				const totalJouls = update.newJouls ?
+					communityData.totalJouls + update.newJouls : communityData.totalJouls
+				const totalTrips = update.newTrip ?
+					communityData.totalTrips + update.newTrip : communityData.totalTrips
+				const totalTrades = update.newExchange ?
+					communityData.totalTrades + update.newExchange : communityData.totalTrades
+
+				// update the aggregates
+				doc.ref.update({
+					totalJouls,
+					totalTrips,
+					totalTrades
+				}).catch((err) => console.error('error updating community aggregates', err))
+
+				// add an update to the update feed
+				doc.ref.collection('updates').add(update)
+					.then(console.log('successfully added update'))
+					.catch((err) => console.error('error adding community updates', err))
+
+				}).catch((err) => console.error('error retrieving community data', err))
+			}
+		).catch((err) => console.error('error retrieving user', err))
+	})
