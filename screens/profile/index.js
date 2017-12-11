@@ -101,16 +101,6 @@ export default class Profile extends React.Component {
           </Right>
         </Header>
 	      <ScrollView>
-		      <View>
-			      { userData ?
-			      <Text style={styles.money}>{userData.closestBus ? userData.closestBus.distance : null}</Text>
-			       : null
-				      }
-			      { userData ?
-				      <Text style={styles.money}>{userData.closestBus ? userData.closestBus.bus.routeId : null}</Text>
-				      : null
-			      }
-		      </View>
 		      <List containerStyle={styles.list}>
 			      { events ?
 				      events.map((event, i) => (
