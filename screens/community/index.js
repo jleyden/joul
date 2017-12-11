@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, ScrollView} from 'react-native';
 import { Header, Body, Title, Container } from 'native-base'
-
-import { StockLine } from 'react-native-pathjs-charts'
+import firebase from 'firebase'
+import 'firebase/firestore';
 
 import icon from './community.png'
 
@@ -21,91 +21,44 @@ export default class Community extends React.Component {
 			/>)
 	};
 
-	daysAgo(num) {
-		const d = new Date()
-		d.setDate(d.getDate() - num);
-		return d
+	constructor() {
+		super()
+		this.state = {
+			updates: null,
+			totalJouls: null,
+			totalTrips: null,
+			totalTrades: null
+		}
+		this.firestore = firebase.firestore()
 	}
 
-	render() {
-		let data = [
-			[{
-				"x": this.daysAgo(10),
-				"y": 0
-			}, {
-				"x": this.daysAgo(9),
-				"y": 1
-			}, {
-				"x": this.daysAgo(8),
-				"y": 15
-			}, {
-				"x": this.daysAgo(7),
-				"y": 27
-			}, {
-				"x": this.daysAgo(6),
-				"y": 64
-			}, {
-				"x": this.daysAgo(5),
-				"y": 67
-			}, {
-				"x": this.daysAgo(4),
-				"y": 70
-			}, {
-				"x": this.daysAgo(3),
-				"y": 74
-			}, {
-				"x": this.daysAgo(2),
-				"y": 78
-			}, {
-				"x": this.daysAgo(1),
-				"y": 82
-			}, {
-				"x": new Date(),
-				"y": 82
-			}] ]
+	componentWillMount() {
+		// update aggregate data
+		this.firestore.collection('community').doc('root')
+			.onSnapshot( (doc) => {
+				const data = doc.data()
+				this.setState({
+					totalJouls: data.totalJouls,
+					totalTrips: data.totalTrips,
+					totalTrades: data.totalTrades
+				})
+			})
 
-		let options = {
-			height: 280,
-			color: '#009688',
-			margin: {
-				top: 20,
-				left: 45,
-				bottom: 25,
-				right: 20
-			},
-			animate: {
-				type: 'delayed',
-				duration: 200
-			},
-			axisX: {
-				showAxis: true,
-				showLines: true,
-				showLabels: true,
-				showTicks: true,
-				zeroAxis: false,
-				orient: 'bottom',
-				label: {
-					fontFamily: 'Arial',
-					fontSize: 14,
-					fontWeight: true,
-					fill: '#34495E'
-				}
-			},
-			axisY: {
-				showAxis: true,
-				showLines: true,
-				showLabels: true,
-				showTicks: true,
-				zeroAxis: false,
-				orient: 'left',
-				label: {
-					fontFamily: 'Arial',
-					fontSize: 14,
-					fontWeight: true,
-					fill: '#34495E'
-				}
-			}
-		}
+		// update community feed
+		this.firestore.collection('community/root/updates').orderBy("time", "desc").limit(7)
+			.onSnapshot( (querySnapshot) => {
+				const updates = []
+				querySnapshot.forEach( (doc) => {
+					updates.push(doc.data())
+				})
+				this.setState({
+					updates
+				})
+			})
+	}
+
+
+	render() {
 
 		return (
 			<Container>
@@ -116,8 +69,6 @@ export default class Community extends React.Component {
 			</Header>
 			<ScrollView contentContainerStyle={styles.container}>
 				<View style={styles.chartBox}>
-					<Title>Total Jouls in Market</Title>
-					<StockLine data={data} options={options} xKey='x' yKey='y' />
 				</View>
 			</ScrollView>
 			</Container>
