@@ -254,7 +254,7 @@ exports.updateCommunity = functions.firestore
 		}
 
 		// get data from the new event, if it is approved
-		if (eventData.validation === 'pending' || eventData.validation === 'disapproved') {
+		if (eventData.validation === 'pending') {
 			return
 		} else if (eventData.type === 'transit') {
 			update.event = 'transit event'
