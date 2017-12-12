@@ -52,6 +52,7 @@ export default class Postings extends React.Component {
       this.loadUser()
     }
     if (!this.state.items && user) {
+      console.log("updating items in Market")
       this.updateItems()
     }
     const userData = this.state.userData
