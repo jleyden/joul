@@ -42,6 +42,7 @@ class Main extends React.Component {
     const userRef = this.props.screenProps.fireStoreRefs.user
     userRef.onSnapshot( (doc) => {
           this.setState({
+            userRef: doc,
             userData: doc.data()
           })
         }
@@ -49,7 +50,7 @@ class Main extends React.Component {
   }
 
   updateEvents() {
-    const eventsRef = this.props.screenProps.fireStoreRefs.events
+    const eventsRef = this.props.screenProps.fireStoreRefs.user.collection('events')
     eventsRef.orderBy("time", "desc").onSnapshot(
         (querySnapshot) => {
           const eventList = []
@@ -64,8 +65,15 @@ class Main extends React.Component {
   }
 
   updateItems() {
-    const itemsRef = this.props.screenProps.fireStoreRefs.items
-    itemsRef.orderBy("Time").onSnapshot(
+    var username
+    var userRef = this.props.screenProps.fireStoreRefs.user
+    userRef.onSnapshot( (doc) => {
+          userRef = doc
+        }
+    )
+    const docRef = this.firestore.collection("market")
+    var searched = docRef.where("user", "==", userRef).
+        orderBy("time").onSnapshot(
         (querySnapshot) => {
           if (querySnapshot.empty) {
             console.log("No items")
@@ -73,15 +81,8 @@ class Main extends React.Component {
           }
           const itemList = []
           querySnapshot.forEach( (doc) => {
-            if (doc.exists) {
-              const docRef = doc.data().DocRef
-              if (docRef) {
-                docRef.get().then( (doc) => {
-                  if (doc.data().available) {
-                    itemList.push(doc)
-                  }
-                })
-              }
+            if (doc.data().available) {
+              itemList.push(doc)
             }
           })
           this.setState({
@@ -145,7 +146,8 @@ class Main extends React.Component {
       this.updateEvents()
       this.readingEvents = true
     }
-    if (user && !this.readingItems) {
+    if (user && !this.state.items) {
+      console.log("updating items in Profile")
       this.updateItems()
       this.readingItems = true
     }
