@@ -167,7 +167,7 @@ export default class Actions extends React.Component {
 			  (error) => this.setState({ error: error.message }),
 			  { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
 		  )
-	  , 10000);
+	  , 7500);
   }
 
   // updates the geoBox
