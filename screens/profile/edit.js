@@ -44,6 +44,9 @@ export default class Edit extends React.Component {
   }
 
   savePosting() {
+	  const backAction = NavigationActions.back({
+		  key: null
+	  })
     const itemID = this.props.navigation.state.params.itemID
     var itemRef = this.firestore.collection("market").doc(itemID);
     itemRef.update({
@@ -55,10 +58,10 @@ export default class Edit extends React.Component {
           'Success',
           'Post was edited!',
           [
-            {text: 'OK', onPress: () => {}}
+            {text: 'OK', onPress: () => {this.props.navigation.dispatch(backAction)}}
           ]
       )
-    }).catch(function(error) {
+    }.bind(this)).catch(function(error) {
       Alert.alert(
           'Error',
           'Please try again later'
@@ -79,6 +82,9 @@ export default class Edit extends React.Component {
   }
 
   deletePosting() {
+	  const backAction = NavigationActions.back({
+		  key: null
+	  })
     const itemID = this.props.navigation.state.params.itemID
     var itemRef = this.firestore.collection("market").doc(itemID);
     itemRef.update({
@@ -88,10 +94,10 @@ export default class Edit extends React.Component {
           'Success',
           'Post was deleted',
           [
-            {text: 'OK', onPress: () => {}}
+            {text: 'OK', onPress: () => {this.props.navigation.dispatch(backAction)}}
           ]
       )
-    }).catch(function(error) {
+    }.bind(this)).catch(function(error) {
       Alert.alert(
           'Error',
           'Please try again later'
