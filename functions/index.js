@@ -4,6 +4,11 @@ const firebase = require('firebase')
 require('firebase/firestore')
 const axios = require('axios')
 
+let closest = {
+	distance: 100000,
+	bus: {routeId: 'none'}
+}
+
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
@@ -13,8 +18,13 @@ function isValid(userPoint, busPoint) {
 	const latDistance = Math.abs(userPoint.latitude - busPoint.lat)
 	const lonDistance = Math.abs(userPoint.longitude - busPoint.lon)
 	const distance = Math.sqrt(Math.pow(latDistance, 2) + Math.pow(lonDistance, 2))
-	if (distance <= 0.001) {
+	if (distance <= 0.00220) {
 		return true
+	}
+	// for testing purposes, display the closest bus
+	if (distance < closest.distance) {
+		closest.distance = distance
+		closest.bus = busPoint
 	}
 	return false
 }
@@ -68,9 +78,7 @@ function readPath(pathRef) {
 				const pointData = point.data()
 				if (!pointData.end) {
 					total += 1.0
-					console.log(point)
-					console.log(point.data().valid)
-					if (point.data().valid === true) {
+					if (pointData.valid === true) {
 						valid += 1.0
 					}
 				}
@@ -79,7 +87,7 @@ function readPath(pathRef) {
 			// Allow for a 75% approval rate
 			let validTrip = 'disapproved'
 			const validRatio = valid / total
-			if (validRatio >= 0.75) {
+			if (validRatio >= 0.65) {
 				validTrip = 'approved'
 			}
 
@@ -100,6 +108,9 @@ exports.validateTrip = functions.firestore
 	.onCreate(point => {
 		const userPoint = point.data.data();
 
+		// for testing purposes, we want to display the user's closest bus
+		const userRef = point.data.ref.parent.parent.parent.parent
+
 		// If the trip has ended, review all the points for submission
 		if (userPoint.end) {
 			const pathRef = point.data.ref.parent
@@ -112,10 +123,20 @@ exports.validateTrip = functions.firestore
 		axios.get('http://restbus.info/api/agencies/actransit/vehicles')
 			.then((response) => {
 				response.data.forEach((busPoint) => {
-					if (isValid(userPoint, busPoint)) {
+					if (isValid(userPoint, busPoint, userRef)) {
 						validStatus = true
 					}
 				})
+
+				//update the user's closest bus for testing
+				userRef.update({
+					closestBus: closest
+				}).then(() => {
+					console.log('updated closest bus', closest)
+					closest.distance = 100000;
+					closest.bus = {routeId: 'none'} }).catch((error) => 'error updating closest')
+
+
 				const pointRef = point.data.ref
 					pointRef.update({
 						valid: validStatus
@@ -222,4 +243,59 @@ exports.exchangeJouls = functions.firestore
 			// make the item unavailable on the market
 			createExchangeEvents(payerRef, receiverRef, amount)
 		}).catch((error) => console.error('error accessing buyer', error))
+	})
+
+exports.updateCommunity = functions.firestore
+	.document('users/{userId}/events/{eventId}')
+	.onWrite(event => {
+		const eventData = event.data.data()
+		let update = {
+			time: new Date()
+		}
+
+		// get data from the new event, if it is approved
+		if (eventData.validation === 'pending') {
+			return
+		} else if (eventData.type === 'transit') {
+			update.event = 'transit event'
+			update.newJouls = eventData.jouls
+			update.newTrip = 1
+		} else {
+			update.event = eventData.type
+			update.newExchange = 1
+		}
+
+		// get the username
+		const userRef = event.data.ref.parent.parent
+		userRef.get().then( (doc) => {
+			update.username =  doc.data().username
+
+			// get the community data for updating
+			const rootRef = event.data.ref.parent.parent.parent.parent
+			const communityCollection = rootRef.collection('community')
+			const communityRoot = communityCollection.doc('root')
+			communityRoot.get().then( (doc) => {
+				const communityData = doc.data()
+				const totalJouls = update.newJouls ?
+					communityData.totalJouls + update.newJouls : communityData.totalJouls
+				const totalTrips = update.newTrip ?
+					communityData.totalTrips + update.newTrip : communityData.totalTrips
+				const totalTrades = update.newExchange ?
+					communityData.totalTrades + update.newExchange : communityData.totalTrades
+
+				// update the aggregates
+				doc.ref.update({
+					totalJouls,
+					totalTrips,
+					totalTrades
+				}).catch((err) => console.error('error updating community aggregates', err))
+
+				// add an update to the update feed
+				doc.ref.collection('updates').add(update)
+					.then(console.log('successfully added update'))
+					.catch((err) => console.error('error adding community updates', err))
+
+				}).catch((err) => console.error('error retrieving community data', err))
+			}
+		).catch((err) => console.error('error retrieving user', err))
 	})
