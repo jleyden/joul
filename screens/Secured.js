@@ -40,6 +40,7 @@ export default class Secured extends React.Component {
 			fireStoreRefs: {
 				user: null,
 				events: null,
+				items: null,
 			}
 		}
 		this.updateUser = this.updateUser.bind(this)
@@ -50,11 +51,13 @@ export default class Secured extends React.Component {
 		if (user) {
 			const userRef = this.firestore.collection('users').doc(user.uid)
 			const eventsRef = userRef.collection('events')
+			const itemsRef = userRef.collection('items')
 			this.setState({
 				user,
 				fireStoreRefs: {
 					user: userRef,
-					events: eventsRef
+					events: eventsRef,
+					items: itemsRef,
 				}
 			})
 		} else {

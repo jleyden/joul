@@ -13,7 +13,7 @@ class Login extends React.Component {
             loading: false,
             route: 'Login',
             email: '',
-            password: '',
+            password: '.',
         };
     }
     userLogin (e) {
@@ -74,7 +74,6 @@ class Login extends React.Component {
                     ref={(input) => this.passwordInput = input}
                     onSubmitEditing={(e) => this.userLogin(e)}
                 />
-
                 <TouchableOpacity onPress={(e) => this.userLogin(e)} title={this.state.route} style={styles.buttonContainer}>
                     <Text style={styles.buttonText}>LOGIN</Text>
                 </TouchableOpacity>

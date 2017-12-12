@@ -51,7 +51,7 @@ export default class Post extends React.Component {
 	    title: this.state.title,
       time: timestamp,
       description: this.state.description,
-      price: this.state.price,
+      price: parseFloat(this.state.price),
       user: this.props.screenProps.fireStoreRefs.user,
     }).then((docRef) => {
       this.refPostToUser(timestamp, docRef);
@@ -124,7 +124,7 @@ export default class Post extends React.Component {
                         keyboardType='numeric'
                         autoCorrect={false}
                         value={this.state.price}
-                        onChangeText={(text) => this.setState({ price: parseFloat(text) })}
+                        onChangeText={(text) => this.setState({ price: text })}
                         ref={(input) => this.priceInput = input}
                         onSubmitEditing={() => this.descriptionInput.focus()}
                     />
@@ -133,7 +133,7 @@ export default class Post extends React.Component {
                         placeholderTextColor="rgba(255,255,255,0.8)"
                         returnKeyType="next"
                         style={styles.description}
-                        value={this.state.password}
+                        value={this.state.description}
                         multiline={true}
                         onChangeText={(text) => this.setState({ description: text })}
                         ref={(input) => this.descriptionInput = input}
