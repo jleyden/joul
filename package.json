@@ -24,7 +24,7 @@
   "dependencies": {
     "amazon-cognito-identity-js": "^1.21.0",
     "expo": "^21.0.3",
-    "firebase": "^4.6.0",
+    "firebase": "^4.8.1",
     "firebase-functions": "^0.7.3",
     "native-base": "^2.3.3",
     "react": "^16.0.0",
