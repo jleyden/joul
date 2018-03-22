@@ -260,9 +260,12 @@ exports.updateCommunity = functions.firestore
 			update.event = 'transit event'
 			update.newJouls = eventData.jouls
 			update.newTrip = 1
-		} else {
+			// we dont want to count purchases/sales twice (they are two different events)
+		} else if (eventData.jouls >= 0) {
 			update.event = eventData.type
 			update.newExchange = 1
+		} else {
+			return
 		}
 
 		// get the username

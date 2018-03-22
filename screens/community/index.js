@@ -46,7 +46,7 @@ export default class Community extends React.Component {
 			})
 
 		// update community feed
-		this.firestore.collection('community/root/updates').orderBy("time", "desc").limit(7)
+		this.firestore.collection('community/root/updates').orderBy("time", "desc").limit(20)
 			.onSnapshot( (querySnapshot) => {
 				const updates = []
 				querySnapshot.forEach( (doc) => {
@@ -62,7 +62,7 @@ export default class Community extends React.Component {
 	render() {
 
 		return (
-			<Container>
+			<Container style={styles.container}>
 			<Header>
 				<Body>
 					<Title>Community</Title>
@@ -70,14 +70,23 @@ export default class Community extends React.Component {
 			</Header>
 				{this.state.totalJouls === null || this.state.updates === null ?
 					<ActivityIndicator size="large" color="#e91e63"/> :
-					<ScrollView contentContainerStyle={styles.container}>
-						<View style={{ justifyContent: 'flex-start', alignItems:'flex-start'}}>
-							<Title style={styles.bigText}>{'Jouls in circulation: ' + this.state.totalJouls.toString()}</Title>
-							<Title style={styles.bigText}>{'Total trips: ' + this.state.totalTrips.toString()}</Title>
-							<Title style={styles.bigText}>{'Total trades: ' + this.state.totalTrades.toString()}</Title>
+					<ScrollView>
+						<View style={styles.stats}>
+							<View style={{width: '33%', backgroundColor: '#0288D1'}}>
+								<Title style={styles.bigText}>{this.state.totalTrips.toString()}</Title>
+								<Title>Total Trips</Title>
+							</View>
+							<View style={{width: '33%',backgroundColor: '#FDD835' }}>
+								<Title style={styles.bigText}>{this.state.totalJouls.toString()}</Title>
+								<Title>Jouls in Flow</Title>
+							</View>
+							<View style={{width: '33%', backgroundColor: '#009688' }}>
+								<Title style={styles.bigText}>{this.state.totalTrades.toString()}</Title>
+								<Title> Total Trades</Title>
+							</View>
 						</View>
 						<View style={{width: '100%', marginTop: 20}}>
-							<Title style={styles.bigText}>{'Recent Activity'}</Title>
+							<Title style={styles.recentActivity}>{'Recent Activity'}</Title>
 							<List containerStyle={styles.list}>
 								{this.state.updates.map((update, i) => (
 									<ListItem containerStyle={styles.listItem}
@@ -85,7 +94,9 @@ export default class Community extends React.Component {
 									key={i}
 									title={update.username + ' completed a ' + update.event}
 									subtitle={update.time.toDateString()}
-									hideChevron={true}/>))
+									hideChevron={true}
+									backgroundColor={update.event == 'transit event' ? '#0288D1' : '#009688'}
+									          subtitleStyle={{color: 'white'}}/>))
 								}
 							</List>
 						</View>
@@ -99,30 +110,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'flex-start',
 	  width: '100%'
   },
+	stats: {
+  	justifyContent: 'space-between',
+		alignItems:'center',
+		flex: 1,
+		flexDirection: 'row'
+	},
   bigText: {
-    color: '#009688',
-    fontSize: 20
+    color: 'black',
+    fontSize: 40,
+	  fontWeight: 'bold'
   },
+	recentActivity: {
+		color: 'black',
+		fontSize: 23,
+		fontWeight: 'bold'
+	},
 	chartBox: {
   	width: '50%',
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
 	list: {
-		margin: 20
+		margin: 0,
+		borderColor: 'white'
 	},
 	listItem: {
 		height: 75,
 		borderStyle: 'solid',
-		borderWidth: 5,
-		borderColor: '#242424',
+		borderWidth: 3,
+		borderColor: 'white',
 		padding: 5
 	},
 	listTitle: {
-		color: '#009688'
+		color: 'black',
+		fontWeight: 'bold'
 	}
 });
