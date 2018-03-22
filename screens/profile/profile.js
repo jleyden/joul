@@ -310,12 +310,13 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   list: {
-    margin: 20
+    margin: 0,
+	  borderWidth: 0
   },
   listItem: {
     height: 75,
     borderStyle: 'solid',
-    borderWidth: 5,
+    borderWidth: 3,
     borderColor: '#242424',
     padding: 5
   },
