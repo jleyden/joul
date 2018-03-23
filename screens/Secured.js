@@ -1,35 +1,38 @@
-import React from 'react';
+import React from 'react'
 import { StackNavigator, TabNavigator } from 'react-navigation'
 import firebase from 'firebase'
-import 'firebase/firestore';
+import 'firebase/firestore'
+import Platform from 'react-native'
+import { isIphoneX } from 'react-native-iphone-x-helper'
 
 import Actions from './actions/index'
 import Community from './community/index'
 import Market from './market/index'
 import Profile from './profile/index'
 
-
 const App = TabNavigator({
-    Community: {
-        screen: Community,
-    },
-    Actions: {
-        screen: Actions,
-    },
-    Market: {
-        screen: Market
-    },
-    Profile: {
-        screen: Profile
-    }
+	Community: {
+	screen: Community,
+},
+Actions: {
+	screen: Actions,
+},
+Market: {
+	screen: Market
+},
+Profile: {
+	screen: Profile
+}
 }, {
-    tabBarPosition: 'bottom',
-    animationEnabled: false,
-    tabBarOptions: {
-        activeTintColor: '#e91e63',
-    },
+	tabBarPosition: 'bottom',
+		animationEnabled: false,
+		tabBarOptions: {
+			activeTintColor: '#e91e63',
+			style: {
+				marginBottom: isIphoneX() ? 25 : 0
+			}
+	},
 })
-
 
 export default class Secured extends React.Component {
 
@@ -69,6 +72,7 @@ export default class Secured extends React.Component {
 		firebase.auth().onAuthStateChanged(
 			this.updateUser
 		)
+
 	}
 
 	render() {
