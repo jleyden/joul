@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView, Image, Alert, View} from 'react-native';
+import { StyleSheet, TouchableOpacity, ScrollView, Image, Alert, View, AsyncStorage} from 'react-native';
 import { Container, Header, Content, Text, Icon,
   Left, Body, Right, Switch, Title,
   Thumbnail } from 'native-base';
@@ -101,14 +101,12 @@ class Main extends React.Component {
   }
 
   confirmLogout() {
-    Alert.alert(
-        'Are you sure you want to logout?','',
-        [
-          {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-          {text: 'Logout', onPress: () => this.logout()},
-        ],
-        { cancelable: false }
-    )
+	  AsyncStorage.setItem(
+		  'loggedIn', 'false'
+	  ).then( () => {
+		  console.log('saved login state')
+		  Alert.alert('Simple logout completed, please restart your session')
+	  }).catch((error) => console.error(error))
   }
 
   logout() {
@@ -172,9 +170,9 @@ class Main extends React.Component {
             <Title style={styles.displayName}>{user ? user.displayName : null}</Title>
             </Body>
             <Right>
-              {/*<TouchableOpacity onPress={() => this.confirmLogout()}>*/}
-              {/*<Text style={styles.logout}>Logout</Text>*/}
-              {/*</TouchableOpacity>*/}
+              <TouchableOpacity onPress={() => this.confirmLogout()}>
+                <Text style={styles.logout}>Logout</Text>
+              </TouchableOpacity>
             </Right>
           </Header>
           <View style={styles.switchContainer}>
