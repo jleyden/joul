@@ -76,7 +76,6 @@ export default class Secured extends React.Component {
 	}
 
 	render() {
-		const Navigator = this.navigator
     return (
          <App screenProps={this.state}/>
     );
